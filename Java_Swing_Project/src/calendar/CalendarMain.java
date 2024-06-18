@@ -14,7 +14,7 @@ public class CalendarMain extends JFrame {
 	private GregorianCalendar calendar = new GregorianCalendar();
 
 	public CalendarMain() {
-		setTitle("Caldedar");
+		setTitle("Calendar");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		c.setLayout(new BorderLayout());
 
@@ -67,11 +67,11 @@ public class CalendarMain extends JFrame {
 
 	private void updateCalendar() {
 		monthLabel.setText(calendar.get(Calendar.YEAR) + "년 " + (calendar.get(Calendar.MONTH) + 1) + "월");
-		// create preCalendar
+		// create preCalendar object
 		Calendar preCalendar = new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) - 1, 1);
 		int preTotalDays = preCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-		// create curCalendar
+		// create curCalendar object
 		Calendar curCalendar = new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), 1);
 		int curTotalDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 		int startIndex = curCalendar.get(Calendar.DAY_OF_WEEK) - 1;

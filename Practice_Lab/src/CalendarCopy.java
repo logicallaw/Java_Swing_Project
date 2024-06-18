@@ -45,6 +45,7 @@ public class CalendarCopy extends JFrame{
         header.add(preBtn, BorderLayout.WEST);
         header.add(nextBtn, BorderLayout.EAST);
         header.add(monthLabel, BorderLayout.CENTER);
+//        header.add(tabs, BorderLayout.NORTH);
         
         //day
         JPanel day = new JPanel();
@@ -115,6 +116,12 @@ public class CalendarCopy extends JFrame{
 		}
 		repaint();
 		revalidate();
+	}
+	private JTabbedPane createTabbedPane() {
+		JTabbedPane pane = new JTabbedPane(JTabbedPane.NORTH);
+		pane.addTab("Summary", new JLabel(new ImageIcon("images/apple.jpg")));
+		pane.addTab("Income/Expediture", new JLabel("HI"));
+		return pane;
 	}
 	public static void main(String[] args) {
 		new CalendarCopy();
