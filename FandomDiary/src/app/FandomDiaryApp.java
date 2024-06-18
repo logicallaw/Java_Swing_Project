@@ -1,24 +1,32 @@
 package app;
 
 import java.awt.*;
-import java.util.Date;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.event.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.io.File;
+import java.util.Vector;
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 public class FandomDiaryApp extends JFrame {
 	private Container c = getContentPane();
-	String userInput = null;
-	JTextArea mainWriteArea = new JTextArea(4, 30);
-	
+	private String userInput = null;
+	private JTextArea mainWriteArea = new JTextArea(4, 30);
+
 	// https://dev-coco.tistory.com/31
-	LocalDateTime now = LocalDateTime.now();
-	String formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm"));
-	JLabel timeLabel = new JLabel(formattedNow);
+	private LocalDateTime now = LocalDateTime.now();
+	private String formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
+	private JLabel timeLabel = new JLabel(formattedNow);
 	
+//	private Vector<String> diaries_dir_fileNames = new Vector<String>();
+	private Vector<String> images_dir_fileNames = new Vector<String>();
+	private Vector<ImageIcon> images_dir_Icons = new Vector<ImageIcon>();
+
 	public FandomDiaryApp() {
 		setTitle("Fandom Diary");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -69,39 +77,77 @@ public class FandomDiaryApp extends JFrame {
 	}
 
 	private void createMainPanel() {
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BorderLayout(10, 10));
-		mainPanel.setBackground(Color.WHITE);
+		JPanel main = new JPanel();
+		main.setLayout(new BorderLayout(10, 10));
+		main.setBackground(Color.WHITE);
 
-		JPanel mainWritePanel = new JPanel();
-		mainWritePanel.setLayout(new BorderLayout(5, 5));
-		mainWritePanel.setBackground(new Color(255, 239, 219));
-//		JTextArea writeArea = new JTextArea(4, 30);
+		// mainWrite
+		JPanel mainWrite = new JPanel();
+		mainWrite.setLayout(new BorderLayout(5, 5));
+		mainWrite.setBackground(new Color(255, 239, 219));
+
 		mainWriteArea.setBackground(new Color(255, 239, 219));
 		Color borderColor = new Color(250, 214, 189); // 경계 색상을 파란색으로 지정
 		int borderWidth = 1; // 경계 두께를 얇게, 1픽셀로 지정
 		LineBorder border = new LineBorder(borderColor, borderWidth, true);
 		mainWriteArea.setBorder(border);
 		mainWriteArea.setFont(new Font("Arial", Font.PLAIN, 15));
-		
-		JPanel mainWriteFooterPanel = new JPanel(new BorderLayout(10,10));
-		mainWriteFooterPanel.setBackground(new Color(255, 239, 219));
 
-		JPanel mainWriteFooterLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		mainWriteFooterLeftPanel.add(new JButton("사진"));
-		mainWriteFooterLeftPanel.add(new JButton("위치"));
+		JPanel mainWriteFooter = new JPanel(new BorderLayout(10, 10));
+		mainWriteFooter.setBackground(new Color(255, 239, 219));
+
+		JPanel mainWriteFooterLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		mainWriteFooterLeft.add(new JButton("사진"));
+		mainWriteFooterLeft.add(new JButton("위치"));
 		JButton writeZoomIn = new JButton("확대");
-		mainWriteFooterLeftPanel.add(writeZoomIn);
-		mainWriteFooterLeftPanel.setBackground(new Color(255, 239, 219));
-		
-		JPanel mainWriteFooterRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		mainWriteFooterRightPanel.add(timeLabel);
-		mainWriteFooterRightPanel.setBackground(new Color(255, 239, 219));
-		
-		mainWriteFooterPanel.add(mainWriteFooterLeftPanel, BorderLayout.WEST);
-		mainWriteFooterPanel.add(mainWriteFooterRightPanel, BorderLayout.EAST);
-		
-		
+		mainWriteFooterLeft.add(writeZoomIn);
+		mainWriteFooterLeft.setBackground(new Color(255, 239, 219));
+
+		JPanel mainWriteFooterRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		mainWriteFooterRight.add(timeLabel);
+		mainWriteFooterRight.setBackground(new Color(255, 239, 219));
+
+		mainWriteFooter.add(mainWriteFooterLeft, BorderLayout.WEST);
+		mainWriteFooter.add(mainWriteFooterRight, BorderLayout.EAST);
+
+		mainWrite.add(new JScrollPane(mainWriteArea), BorderLayout.CENTER);
+		mainWrite.add(new JButton("작성"), BorderLayout.EAST);
+		mainWrite.add(mainWriteFooter, BorderLayout.SOUTH);
+
+		// mainGallery
+		JPanel mainGallery = new JPanel(new GridLayout(4, 4, 10, 10));
+
+//		Vector<String> fileNames = new Vector<String>();
+//		Vector<ImageIcon> imgIcons = new Vector<ImageIcon>();
+
+		File dir = new File("images");
+		File[] subFiles = dir.listFiles();
+
+		for (int i = 0; i < subFiles.length; i++) {
+			File f = subFiles[i];
+			images_dir_fileNames.add(f.getName());
+			ImageIcon originImage = new ImageIcon("images/" + f.getName());
+			// https://wildeveloperetrain.tistory.com/289
+			Image scaledImage = originImage.getImage().getScaledInstance(400 / 4, 500 / 4, Image.SCALE_SMOOTH);
+			images_dir_Icons.add(new ImageIcon(scaledImage));
+		}
+
+		for (int i = 0; i < images_dir_Icons.size(); i++) {
+			mainGallery.add(new JLabel(images_dir_Icons.get(i)));
+		}
+
+		main.add(mainWrite, BorderLayout.NORTH);
+		main.add(mainGallery, BorderLayout.CENTER);
+		c.add(main, BorderLayout.CENTER);
+
+		mainWriteArea.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				JTextArea ta = (JTextArea) e.getSource();
+				String texts = ta.getText();
+				userInput = texts;
+			}
+		});
 
 		writeZoomIn.addActionListener(new ActionListener() {
 			@Override
@@ -109,23 +155,6 @@ public class FandomDiaryApp extends JFrame {
 				openDiaryFrame();
 			}
 		});
-
-		mainWritePanel.add(new JScrollPane(mainWriteArea), BorderLayout.CENTER);
-		mainWritePanel.add(new JButton("작성"), BorderLayout.EAST);
-		mainWritePanel.add(mainWriteFooterPanel, BorderLayout.SOUTH);
-
-		mainPanel.add(mainWritePanel, BorderLayout.NORTH);
-		c.add(mainPanel, BorderLayout.CENTER);
-		
-		mainWriteArea.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				JTextArea ta = (JTextArea)e.getSource();
-				String texts = ta.getText();
-				userInput = texts;
-			}
-		});
-		
 	}
 
 	private void createSideBarPanel() {
@@ -151,21 +180,21 @@ public class FandomDiaryApp extends JFrame {
 		JLabel diaryHeaderTitle = new JLabel("WRITE", JLabel.CENTER);
 		diaryHeaderTitle.setFont(new Font("Arial", Font.BOLD, 20));
 		JButton diaryHeaderWrite = new JButton("V");
-		
+
 		diaryHeader.add(diaryHeaderExit, BorderLayout.WEST);
 		diaryHeader.add(diaryHeaderTitle, BorderLayout.CENTER);
 		diaryHeader.add(diaryHeaderWrite, BorderLayout.EAST);
 
 		// diaryMain
 		JPanel diaryMain = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JTextArea diaryMainWriteArea = new JTextArea(8,32);
+		JTextArea diaryMainWriteArea = new JTextArea(8, 32);
 		diaryMainWriteArea.setEditable(true);
 		diaryMainWriteArea.setLineWrap(true);
 		diaryMainWriteArea.setWrapStyleWord(true);
 		diaryMainWriteArea.setFont(new Font("Arial", Font.PLAIN, 20));
 		diaryMainWriteArea.setText(userInput);
 		diaryMain.add(new JScrollPane(diaryMainWriteArea));
-		
+
 		// diaryFooter
 		JPanel diaryFooter = new JPanel(new BorderLayout(10, 10));
 
@@ -177,12 +206,7 @@ public class FandomDiaryApp extends JFrame {
 		}
 
 		JPanel diaryFooterRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-		
-		// https://dev-coco.tistory.com/31
-//		LocalDateTime now = LocalDateTime.now();
-//		String formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm"));
-//		JLabel timeLabel = new JLabel(formattedNow);
-		
+
 		JLabel numOfCharsLabel = new JLabel(Integer.toString(0));
 		diaryFooterRightPanel.add(numOfCharsLabel);
 		diaryFooterRightPanel.add(timeLabel);
@@ -194,10 +218,10 @@ public class FandomDiaryApp extends JFrame {
 		diaryFrame.add(diaryHeader, BorderLayout.NORTH);
 		diaryFrame.add(diaryMain, BorderLayout.CENTER);
 		diaryFrame.add(diaryFooter, BorderLayout.SOUTH);
-		
+
 		diaryFrame.setSize(600, 800);
 		diaryFrame.setVisible(true);
-		
+
 		diaryMainWriteArea.setFocusable(true);
 		diaryMainWriteArea.requestFocus();
 
@@ -211,25 +235,47 @@ public class FandomDiaryApp extends JFrame {
 		diaryMainWriteArea.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				JTextArea ta = (JTextArea)e.getSource();
+				JTextArea ta = (JTextArea) e.getSource();
 				String texts = ta.getText();
 				int numOfTexts = texts.length();
-				if(numOfTexts <= 1000) {
-					numOfCharsLabel.setText(Integer.toString(numOfTexts) + "/1000");
-					userInput = texts;
-				}
-				else {
-					JOptionPane.showMessageDialog(null, "글자수는 100자 내로 입력해주세요.","Message", JOptionPane.ERROR_MESSAGE);
-				}
+				numOfCharsLabel.setText(Integer.toString(numOfTexts) + "/1000");
+				userInput = texts;
+//				if (numOfTexts <= 1000) {
+//					numOfCharsLabel.setText(Integer.toString(numOfTexts) + "/1000");
+//					userInput = texts;
+//				} else {
+//					JOptionPane.showMessageDialog(null, "글자수는 100자 내로 입력해주세요.", "Message", JOptionPane.ERROR_MESSAGE);
+//				}
 			}
 		});
-		
-		
+		diaryHeaderWrite.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String fileName = "diaries/" + now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss")) + ".txt";
+					FileWriter fw = new FileWriter(fileName);
+					BufferedWriter writer = new BufferedWriter(fw);
+					writer.write(userInput);
+					writer.close();
+					fw.close();
+				} catch(IOException ee) {
+					System.out.println("IOException Error!");
+				}
+				userInput = "";
+				mainWriteArea.setText("");
+				diaryMainWriteArea.setText("");
+				diaryFrame.dispose();	
+				now = LocalDateTime.now();
+				formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
+				timeLabel.setText(formattedNow);
+				repaint();
+				revalidate();
+			}
+		});
+
 	}
-	
-	
+
 	public static void main(String[] args) {
 		new FandomDiaryApp();
 	}
-
 }
