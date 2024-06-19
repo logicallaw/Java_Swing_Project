@@ -1,4 +1,4 @@
-package app;
+
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class DiaryFrame extends JFrame {
+public class copy_DiaryFrame extends JFrame {
 	// FandomDiaryApp field
 	private JTextArea mainWriteArea = null;
 	private JLabel mainTimeLabel = null;
@@ -35,7 +35,7 @@ public class DiaryFrame extends JFrame {
 	private String formattedNow = null;
 	private LocalDateTime now = null;
 
-	public DiaryFrame(JTextArea mwa, JLabel mtl, LocalDateTime n) {
+	public copy_DiaryFrame(JTextArea mwa, JLabel mtl, LocalDateTime n) {
 		mainWriteArea = mwa;
 		mainTimeLabel = mtl;
 		now = n;
@@ -103,7 +103,7 @@ public class DiaryFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mainWriteArea.setText(userInput);
-				DiaryFrame.this.dispose();
+				copy_DiaryFrame.this.dispose();
 			}
 		});
 		diaryMainWriteArea.addKeyListener(new KeyAdapter() {
@@ -117,7 +117,7 @@ public class DiaryFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				writeDiary();
-				DiaryFrame.this.dispose();
+				copy_DiaryFrame.this.dispose();
 			}
 		});
 	}

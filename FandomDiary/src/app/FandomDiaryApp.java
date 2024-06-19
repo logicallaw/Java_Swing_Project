@@ -26,7 +26,7 @@ public class FandomDiaryApp extends JFrame {
 	private Vector<String> images_dir_fileNames = new Vector<String>();
 	private Vector<ImageIcon> images_dir_Icons = new Vector<ImageIcon>();
 	
-//	private DiaryFrame currentDiaryFrame = null;
+	private DiaryFrame currentDiaryFrame = null;
 
 	public FandomDiaryApp() {
 		setTitle("Fandom Diary");
@@ -149,18 +149,19 @@ public class FandomDiaryApp extends JFrame {
 		writeZoomIn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				 openDiaryFrame();
-//				if (currentDiaryFrame != null) {
-//                    currentDiaryFrame.dispose(); // 기존 DiaryFrame 닫기
-//                }
-//                // 새로운 DiaryFrame 생성
-//                currentDiaryFrame = new DiaryFrame(mainWriteArea, userInput, formattedNow, now, mainTimeLabel);
-//                currentDiaryFrame.addWindowListener(new WindowAdapter() {
-//                    @Override
-//                    public void windowClosed(WindowEvent e) {
-//                        currentDiaryFrame = null; // 다이어리 프레임이 닫혔을 때 참조 해제
-//                    }
-//                });
+//				 openDiaryFrame();
+				currentDiaryFrame = new DiaryFrame(mainWriteArea, mainTimeLabel, now);
+				
+				// Update the current times.
+				currentDiaryFrame.addWindowListener(new WindowAdapter() {
+		            @Override
+		            public void windowClosed(WindowEvent we) {
+		                // currentDiaryFrame이 dispose되면 시간 업데이트.
+		                now = LocalDateTime.now();
+		                formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
+		                mainTimeLabel.setText(formattedNow);
+		            }
+		        });
 			}
 		});
 
@@ -193,7 +194,7 @@ public class FandomDiaryApp extends JFrame {
 
 		JButton diaryHeaderExit = new JButton("X");
 		JLabel diaryHeaderTitle = new JLabel("WRITE", JLabel.CENTER);
-		diaryHeaderTitle.setFont(new Font("Arial", Font.BOLD, 20));
+		diaryHeaderTitle.setFont(new Font("Comic Sans MS", Font.BOLD, 24));
 		JButton diaryHeaderWrite = new JButton("V");
 
 		diaryHeader.add(diaryHeaderExit, BorderLayout.WEST);
