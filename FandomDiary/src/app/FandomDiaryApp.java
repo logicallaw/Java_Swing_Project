@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.event.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.io.File;
@@ -21,11 +20,13 @@ public class FandomDiaryApp extends JFrame {
 	// https://dev-coco.tistory.com/31
 	private LocalDateTime now = LocalDateTime.now();
 	private String formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
-	private JLabel timeLabel = new JLabel(formattedNow);
-	
-//	private Vector<String> diaries_dir_fileNames = new Vector<String>();
+	private JLabel mainTimeLabel = new JLabel(formattedNow);
+
+	// private Vector<String> diaries_dir_fileNames = new Vector<String>();
 	private Vector<String> images_dir_fileNames = new Vector<String>();
 	private Vector<ImageIcon> images_dir_Icons = new Vector<ImageIcon>();
+	
+//	private DiaryFrame currentDiaryFrame = null;
 
 	public FandomDiaryApp() {
 		setTitle("Fandom Diary");
@@ -104,21 +105,19 @@ public class FandomDiaryApp extends JFrame {
 		mainWriteFooterLeft.setBackground(new Color(255, 239, 219));
 
 		JPanel mainWriteFooterRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		mainWriteFooterRight.add(timeLabel);
+		mainWriteFooterRight.add(mainTimeLabel);
 		mainWriteFooterRight.setBackground(new Color(255, 239, 219));
 
 		mainWriteFooter.add(mainWriteFooterLeft, BorderLayout.WEST);
 		mainWriteFooter.add(mainWriteFooterRight, BorderLayout.EAST);
 
 		mainWrite.add(new JScrollPane(mainWriteArea), BorderLayout.CENTER);
-		mainWrite.add(new JButton("작성"), BorderLayout.EAST);
+		JButton mainWriteButton = new JButton("작성");
+		mainWrite.add(mainWriteButton, BorderLayout.EAST);
 		mainWrite.add(mainWriteFooter, BorderLayout.SOUTH);
 
 		// mainGallery
 		JPanel mainGallery = new JPanel(new GridLayout(4, 4, 10, 10));
-
-//		Vector<String> fileNames = new Vector<String>();
-//		Vector<ImageIcon> imgIcons = new Vector<ImageIcon>();
 
 		File dir = new File("images");
 		File[] subFiles = dir.listFiles();
@@ -143,16 +142,32 @@ public class FandomDiaryApp extends JFrame {
 		mainWriteArea.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				JTextArea ta = (JTextArea) e.getSource();
-				String texts = ta.getText();
-				userInput = texts;
+				userInput = mainWriteArea.getText();
 			}
 		});
 
 		writeZoomIn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				openDiaryFrame();
+				 openDiaryFrame();
+//				if (currentDiaryFrame != null) {
+//                    currentDiaryFrame.dispose(); // 기존 DiaryFrame 닫기
+//                }
+//                // 새로운 DiaryFrame 생성
+//                currentDiaryFrame = new DiaryFrame(mainWriteArea, userInput, formattedNow, now, mainTimeLabel);
+//                currentDiaryFrame.addWindowListener(new WindowAdapter() {
+//                    @Override
+//                    public void windowClosed(WindowEvent e) {
+//                        currentDiaryFrame = null; // 다이어리 프레임이 닫혔을 때 참조 해제
+//                    }
+//                });
+			}
+		});
+
+		mainWriteButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				writeDiary();
 			}
 		});
 	}
@@ -209,7 +224,8 @@ public class FandomDiaryApp extends JFrame {
 
 		JLabel numOfCharsLabel = new JLabel(Integer.toString(0));
 		diaryFooterRightPanel.add(numOfCharsLabel);
-		diaryFooterRightPanel.add(timeLabel);
+		JLabel diaryTimeLabel = new JLabel(formattedNow);
+		diaryFooterRightPanel.add(diaryTimeLabel);
 
 		diaryFooter.add(diaryFooterLeftPanel, BorderLayout.WEST);
 		diaryFooter.add(diaryFooterRightPanel, BorderLayout.EAST);
@@ -235,44 +251,48 @@ public class FandomDiaryApp extends JFrame {
 		diaryMainWriteArea.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				JTextArea ta = (JTextArea) e.getSource();
-				String texts = ta.getText();
-				int numOfTexts = texts.length();
-				numOfCharsLabel.setText(Integer.toString(numOfTexts) + "/1000");
-				userInput = texts;
-//				if (numOfTexts <= 1000) {
-//					numOfCharsLabel.setText(Integer.toString(numOfTexts) + "/1000");
-//					userInput = texts;
-//				} else {
-//					JOptionPane.showMessageDialog(null, "글자수는 100자 내로 입력해주세요.", "Message", JOptionPane.ERROR_MESSAGE);
-//				}
+				numOfCharsLabel.setText(Integer.toString(diaryMainWriteArea.getText().length()));
+				userInput = diaryMainWriteArea.getText();
+				// if (numOfTexts <= 1000) {
+				// numOfCharsLabel.setText(Integer.toString(numOfTexts) + "/1000");
+				// userInput = texts;
+				// } else {
+				// JOptionPane.showMessageDialog(null, "글자수는 100자 내로 입력해주세요.", "Message",
+				// JOptionPane.ERROR_MESSAGE);
+				// }
 			}
 		});
 		diaryHeaderWrite.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					String fileName = "diaries/" + now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss")) + ".txt";
-					FileWriter fw = new FileWriter(fileName);
-					BufferedWriter writer = new BufferedWriter(fw);
-					writer.write(userInput);
-					writer.close();
-					fw.close();
-				} catch(IOException ee) {
-					System.out.println("IOException Error!");
-				}
-				userInput = "";
-				mainWriteArea.setText("");
-				diaryMainWriteArea.setText("");
-				diaryFrame.dispose();	
-				now = LocalDateTime.now();
-				formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
-				timeLabel.setText(formattedNow);
-				repaint();
-				revalidate();
+				writeDiary();
+				diaryFrame.dispose();
 			}
 		});
 
+	}
+
+	private void writeDiary() {
+		try {
+			String fileName = "diaries/" + now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss")) + ".txt";
+			FileWriter fw = new FileWriter(fileName);
+			BufferedWriter writer = new BufferedWriter(fw);
+			writer.write(userInput);
+			writer.flush();
+			writer.close();
+			fw.close();
+		} catch (IOException err) {
+			err.printStackTrace();
+		}
+		userInput = "";
+		mainWriteArea.setText(userInput);
+
+		// Update the current times.
+		now = LocalDateTime.now();
+		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
+		mainTimeLabel.setText(formattedNow);
+		repaint();
+		revalidate();
 	}
 
 	public static void main(String[] args) {
