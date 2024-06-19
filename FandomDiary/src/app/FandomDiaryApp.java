@@ -21,7 +21,7 @@ public class FandomDiaryApp extends JFrame {
 	private LocalDateTime now = LocalDateTime.now();
 	private String formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
 	private JLabel mainTimeLabel = new JLabel(formattedNow);
-
+	//.
 	// private Vector<String> diaries_dir_fileNames = new Vector<String>();
 	private Vector<String> images_dir_fileNames = new Vector<String>();
 	private Vector<ImageIcon> images_dir_Icons = new Vector<ImageIcon>();
