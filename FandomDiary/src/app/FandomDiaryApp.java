@@ -1,6 +1,7 @@
 package app;
 
-import method.DiaryWrite;
+import method.FileDiary;
+import method.Diary;
 import thread.MusicThread;
 import frame.DiaryFrame;
 import java.awt.*;
@@ -13,13 +14,13 @@ import java.time.format.DateTimeFormatter;
 import java.io.File;
 import java.util.Vector;
 import java.io.IOException;
-
 import javax.sound.sampled.*;
 
 public class FandomDiaryApp extends JFrame {
 	// Frame field
 	private Container c = getContentPane();
-	private Vector<String> images_dir_fileNames = new Vector<String>();
+	private Vector<JLabel> diaries_dir_JLabel = new Vector<JLabel>();
+//	private Vector<String> images_dir_fileNames = new Vector<String>();
 	private Vector<ImageIcon> images_dir_Icons = new Vector<ImageIcon>();
 
 	// header field
@@ -30,7 +31,7 @@ public class FandomDiaryApp extends JFrame {
 	private JButton settingBtn = null;
 	private Boolean isPlay = false;
 	private MusicButtonListener musicListener = null;
-	
+
 	// main field
 	private JTextArea mainWriteArea = new JTextArea(4, 30);
 	private String userInput = null;
@@ -54,9 +55,9 @@ public class FandomDiaryApp extends JFrame {
 
 		setSize(900, 600);
 		setVisible(true);
-		
+
 		// Automatic starting
-		if(isPlay == true) {
+		if (isPlay) {
 			clip.start();
 		}
 	}
@@ -93,7 +94,7 @@ public class FandomDiaryApp extends JFrame {
 		headerBtns = new ButtonFilledWithImage[] { new ButtonFilledWithImage("public/btn_play.png"),
 				new ButtonFilledWithImage("public/btn_stop.png"), new ButtonFilledWithImage("public/btn_again.png"), };
 		slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
-		
+
 		musicListener = new MusicButtonListener();
 		for (ButtonFilledWithImage btn : headerBtns) {
 			btn.addActionListener(musicListener);
@@ -127,7 +128,6 @@ public class FandomDiaryApp extends JFrame {
 				}
 			}
 		});
-
 		th.start();
 	}
 
@@ -142,8 +142,8 @@ public class FandomDiaryApp extends JFrame {
 		mainWrite.setBackground(new Color(255, 239, 219));
 
 		mainWriteArea.setBackground(new Color(255, 239, 219));
-		Color borderColor = new Color(250, 214, 189); // 경계 색상을 파란색으로 지정
-		int borderWidth = 1; // 경계 두께를 얇게, 1픽셀로 지정
+		Color borderColor = new Color(250, 214, 189);
+		int borderWidth = 1;
 		LineBorder border = new LineBorder(borderColor, borderWidth, true);
 		mainWriteArea.setBorder(border);
 		mainWriteArea.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -171,24 +171,35 @@ public class FandomDiaryApp extends JFrame {
 		mainWrite.add(mainWriteFooter, BorderLayout.SOUTH);
 
 		// mainGallery
-		JPanel mainGallery = new JPanel(new GridLayout(4, 4, 10, 10));
+//		JPanel mainGallery = new JPanel(new GridLayout(4, 4, 10, 10));
+		JPanel mainGallery = new JPanel(new BorderLayout(10, 10));
 		mainGallery.setBackground(new Color(255, 245, 238));
-		File dir = new File("images");
-		File[] subFiles = dir.listFiles();
-
-		for (int i = 0; i < subFiles.length; i++) {
-			File f = subFiles[i];
-			images_dir_fileNames.add(f.getName());
-			ImageIcon originImage = new ImageIcon("images/" + f.getName());
-			// https://wildeveloperetrain.tistory.com/289
-			Image scaledImage = originImage.getImage().getScaledInstance(400 / 4, 500 / 4, Image.SCALE_SMOOTH);
-			images_dir_Icons.add(new ImageIcon(scaledImage));
+		
+		FileDiary.loadImages(images_dir_Icons);
+		FileDiary.loadTexts(diaries_dir_JLabel);
+		
+		JPanel postPanel = new JPanel();
+		postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
+		
+		for(int i = 0; i < images_dir_Icons.size(); i++) {
+			JPanel post = new JPanel(new BorderLayout(10,10));
+	        post.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+	        JLabel postImage = new JLabel(images_dir_Icons.get(i));
+	        JLabel postText = diaries_dir_JLabel.get(i);
+	        post.add(postImage, BorderLayout.WEST);
+	        post.add(postText, BorderLayout.CENTER);
+	        postPanel.add(post);
+	        repaint();
+	        revalidate();
 		}
-
-		for (int i = 0; i < images_dir_Icons.size(); i++) {
-			mainGallery.add(new JLabel(images_dir_Icons.get(i)));
-		}
-
+		
+//		for (int i = 0; i < images_dir_Icons.size(); i++) {
+//			mainGallery.add(new JLabel(images_dir_Icons.get(i)));
+//		}
+		
+		JScrollPane scrollPost = new JScrollPane(postPanel);
+		scrollPost.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		mainGallery.add(scrollPost, BorderLayout.CENTER);
 		main.add(mainWrite, BorderLayout.NORTH);
 		main.add(mainGallery, BorderLayout.CENTER);
 		c.add(main, BorderLayout.CENTER);
@@ -204,7 +215,6 @@ public class FandomDiaryApp extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				currentDiaryFrame = new DiaryFrame(mainWriteArea, mainTimeLabel, now);
-
 				currentDiaryFrame.addWindowListener(new WindowAdapter() {
 					@Override
 					public void windowClosed(WindowEvent we) {
@@ -225,9 +235,6 @@ public class FandomDiaryApp extends JFrame {
 	}
 
 	private void createSideBarPanel() {
-		/*
-		 * 아이돌 프로필 작성 좋아하는 좌우명 생년월일 세로 정렬 사용.
-		 */
 		JPanel sidebarPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		sidebarPanel.setBackground(new Color(245, 222, 179));
 		sidebarPanel.add(new JButton("1"));
@@ -235,12 +242,12 @@ public class FandomDiaryApp extends JFrame {
 
 		c.add(sidebarPanel, BorderLayout.WEST);
 	}
-	
+
 	// Method
 	private void writeDiary() {
 		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
-		DiaryWrite.writeDiary(fileNameFormatted, userInput);
-		
+		Diary.writeDiary(fileNameFormatted, userInput);
+
 		userInput = "";
 		mainWriteArea.setText(userInput);
 		// Update the current times.
@@ -250,7 +257,7 @@ public class FandomDiaryApp extends JFrame {
 		repaint();
 		revalidate();
 	}
-	
+
 	private void createClip(String pathName) {
 		try {
 			clip = AudioSystem.getClip();
@@ -261,6 +268,7 @@ public class FandomDiaryApp extends JFrame {
 			e.printStackTrace();
 		}
 	}
+
 	// Event Listener
 	private class MusicButtonListener implements ActionListener {
 		@Override

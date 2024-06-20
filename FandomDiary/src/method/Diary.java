@@ -1,7 +1,19 @@
 package method;
 import java.io.*;
-
-public class DiaryImage {
+public class Diary {
+	public static void writeDiary(String fileNameFormatted, String userInput) {
+		try {
+			String filePath = "diaries/" + fileNameFormatted + ".txt";
+			FileWriter fw = new FileWriter(filePath);
+			BufferedWriter writer = new BufferedWriter(fw);
+			writer.write(userInput);
+			writer.flush();
+			writer.close();
+			fw.close();
+		} catch (IOException err) {
+			err.printStackTrace();
+		}
+	}
 	public static void copyImage(String srcPath, String destPath) {
 		try {
 			FileInputStream fis = new FileInputStream(srcPath);

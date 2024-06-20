@@ -1,7 +1,6 @@
 package frame;
 
-import method.DiaryImage;
-import method.DiaryWrite;
+import method.Diary;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -23,7 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class DiaryFrame extends JFrame {
+public class DiaryFrame extends JFrame{
 	// FandomDiaryApp field
 	private JTextArea mainWriteArea = null;
 	private JLabel mainTimeLabel = null;
@@ -85,7 +84,7 @@ public class DiaryFrame extends JFrame {
 		
 		JPanel diaryFooterRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
 
-		JLabel numOfCharsLabel = new JLabel(Integer.toString(0));
+		JLabel numOfCharsLabel = new JLabel(Integer.toString(mainWriteArea.getText().length()));
 		diaryFooterRightPanel.add(numOfCharsLabel);
 		diaryTimeLabel = new JLabel(formattedNow);
 		diaryFooterRightPanel.add(diaryTimeLabel);
@@ -149,14 +148,17 @@ public class DiaryFrame extends JFrame {
 		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
 		
 		// Write Text
-		DiaryWrite.writeDiary(fileNameFormatted, userInput);
+		Diary.writeDiary(fileNameFormatted, userInput);
 		
 		// Write Image
 		if(srcPath != null) {
 			int dotIndex = srcPath.lastIndexOf(".");
 			String srcExtension = srcPath.substring(dotIndex);
 			String destPath = "images/" + fileNameFormatted + srcExtension;
-			DiaryImage.copyImage(srcPath, destPath);
+			Diary.copyImage(srcPath, destPath);
+		} else {
+			String destPath = "images/" + fileNameFormatted + ".jpg";
+			Diary.copyImage("config/image/default_image.jpg", destPath);
 		}
 		
 		userInput = "";
