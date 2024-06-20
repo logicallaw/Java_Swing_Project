@@ -19,9 +19,10 @@ import javax.sound.sampled.*;
 public class FandomDiaryApp extends JFrame {
 	// Frame field
 	private Container c = getContentPane();
-	private Vector<JLabel> diaries_dir_JLabel = new Vector<JLabel>();
-//	private Vector<String> images_dir_fileNames = new Vector<String>();
-	private Vector<ImageIcon> images_dir_Icons = new Vector<ImageIcon>();
+	private Vector<JLabel> diariesJLabel = new Vector<JLabel>();
+	private Vector<String> diariesPath = new Vector<String>();
+	private Vector<String> imagesPath = new Vector<String>();
+	private Vector<ImageIcon> imagesIcons = new Vector<ImageIcon>();
 
 	// header field
 	private Clip clip = null;
@@ -171,31 +172,26 @@ public class FandomDiaryApp extends JFrame {
 		mainWrite.add(mainWriteFooter, BorderLayout.SOUTH);
 
 		// mainGallery
-//		JPanel mainGallery = new JPanel(new GridLayout(4, 4, 10, 10));
 		JPanel mainGallery = new JPanel(new BorderLayout(10, 10));
 		mainGallery.setBackground(new Color(255, 245, 238));
 		
-		FileDiary.loadImages(images_dir_Icons);
-		FileDiary.loadTexts(diaries_dir_JLabel);
+		FileDiary.getFilePath(diariesPath, imagesPath);
+		
+		FileDiary.loadTexts(diariesPath, diariesJLabel);
+		FileDiary.loadImages(imagesPath, imagesIcons);
 		
 		JPanel postPanel = new JPanel();
 		postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
 		
-		for(int i = 0; i < images_dir_Icons.size(); i++) {
+		for(int i = 0; i < imagesIcons.size(); i++) {
 			JPanel post = new JPanel(new BorderLayout(10,10));
 	        post.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-	        JLabel postImage = new JLabel(images_dir_Icons.get(i));
-	        JLabel postText = diaries_dir_JLabel.get(i);
+	        JLabel postImage = new JLabel(imagesIcons.get(i));
+	        JLabel postText = diariesJLabel.get(i);
 	        post.add(postImage, BorderLayout.WEST);
 	        post.add(postText, BorderLayout.CENTER);
 	        postPanel.add(post);
-	        repaint();
-	        revalidate();
 		}
-		
-//		for (int i = 0; i < images_dir_Icons.size(); i++) {
-//			mainGallery.add(new JLabel(images_dir_Icons.get(i)));
-//		}
 		
 		JScrollPane scrollPost = new JScrollPane(postPanel);
 		scrollPost.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -247,7 +243,7 @@ public class FandomDiaryApp extends JFrame {
 	private void writeDiary() {
 		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
 		Diary.writeDiary(fileNameFormatted, userInput);
-
+		
 		userInput = "";
 		mainWriteArea.setText(userInput);
 		// Update the current times.

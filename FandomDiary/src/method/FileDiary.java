@@ -1,6 +1,7 @@
 package method;
 
 import java.util.Vector;
+import java.util.Collections;
 import javax.swing.ImageIcon;
 import java.awt.*;
 import javax.swing.*;
@@ -12,39 +13,41 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class FileDiary {
-	public static void loadImages(Vector<ImageIcon> images_dir_Icons) {
-		File dir = new File("images");
-		File[] subFiles = dir.listFiles();
-		if (subFiles.length != 0) {
-			int i = (subFiles[0].getName().equals(".DS_Store") == true) ? 1 : 0;
-			for (; i < subFiles.length; i++) {
-				File f = subFiles[i];
-				ImageIcon originImage = new ImageIcon("images/" + f.getName());
-				// https://wildeveloperetrain.tistory.com/289
-				Image scaledImage = originImage.getImage().getScaledInstance(400 / 4, 500 / 4, Image.SCALE_SMOOTH);
-				images_dir_Icons.add(new ImageIcon(scaledImage));
-			}
-		}
-	}
-
-	public static void loadTexts(Vector<JLabel> diaries_dir_JLabel) {
+	public static void getFilePath(Vector<String> diariesPath, Vector<String> imagesPath) {
 		File dir = new File("diaries");
 		File[] subFiles = dir.listFiles();
-		for (int i = 0; i < subFiles.length; i++) {
-			if (subFiles[i].getName().equals(".DS_Store")) {
+		for (File subFile : subFiles) {
+			if (subFile.getName().equals(".DS_Store")) {
 				continue;
 			}
-			File f = subFiles[i];
-			String filePath = f.getPath();
+			diariesPath.add(subFile.getName());
+		}
+	    //https://reakwon.tistory.com/153
+		Collections.sort(diariesPath);
+		
+		dir = new File("images");
+		subFiles = dir.listFiles();
+		for (File subFile : subFiles) {
+			if (subFile.getName().equals(".DS_Store")) {
+				continue;
+			}
+			imagesPath.add(subFile.getName());
+		}
+	    //https://reakwon.tistory.com/153
+		Collections.sort(imagesPath);
+	}
+	
+	public static void loadTexts(Vector<String> diariesPath, Vector<JLabel> diariesJLabel) {
+		for (String filePath : diariesPath) {
 			StringBuffer sb = new StringBuffer();
 			try {
-				FileInputStream fis = new FileInputStream(filePath);
+				FileInputStream fis = new FileInputStream("diaries/" + filePath);
 				InputStreamReader isr = new InputStreamReader(fis);
 				BufferedReader br = new BufferedReader(isr);
-				
+
 				String line = null;
 				while ((line = br.readLine()) != null) {
-					sb.append(line);
+					sb.append(line + "\n");
 				}
 				br.close();
 				isr.close();
@@ -52,9 +55,20 @@ public class FileDiary {
 			} catch (IOException err) {
 				err.printStackTrace();
 			}
-			JLabel diary = new JLabel(sb.substring(0));
-			diaries_dir_JLabel.add(diary);
+			int sbIndex = (sb.length() > 20) ? 100 : sb.length();
+			JLabel diary = new JLabel(sb.substring(0, sbIndex));
+			diariesJLabel.add(diary);
 		}
-
 	}
+
+	public static void loadImages(Vector<String> filePaths, Vector<ImageIcon> imagesIcons) {
+		for (String filePath : filePaths) {
+			File f = new File("images/" + filePath);
+			ImageIcon originImage = new ImageIcon("images/" + f.getName());
+			// https://wildeveloperetrain.tistory.com/289
+			Image scaledImage = originImage.getImage().getScaledInstance(400 / 4, 500 / 4, Image.SCALE_SMOOTH);
+			imagesIcons.add(new ImageIcon(scaledImage));
+		}
+	}
+	
 }
