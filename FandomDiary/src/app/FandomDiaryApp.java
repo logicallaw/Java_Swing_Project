@@ -1,5 +1,6 @@
 package app;
 
+import method.DiaryWrite;
 import thread.MusicThread;
 import frame.DiaryFrame;
 import java.awt.*;
@@ -12,8 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.io.File;
 import java.util.Vector;
 import java.io.IOException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 
 import javax.sound.sampled.*;
 
@@ -29,6 +28,8 @@ public class FandomDiaryApp extends JFrame {
 	private MusicThread th = null;
 	private ButtonFilledWithImage[] headerBtns = null;
 	private JButton settingBtn = null;
+	private Boolean isPlay = false;
+	private MusicButtonListener musicListener = null;
 	
 	// main field
 	private JTextArea mainWriteArea = new JTextArea(4, 30);
@@ -37,6 +38,7 @@ public class FandomDiaryApp extends JFrame {
 	private LocalDateTime now = LocalDateTime.now();
 	private String formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
 	private JLabel mainTimeLabel = new JLabel(formattedNow);
+	private String srcPath = null;
 
 	// DiaryFrame Object
 	private DiaryFrame currentDiaryFrame = null;
@@ -52,6 +54,11 @@ public class FandomDiaryApp extends JFrame {
 
 		setSize(900, 600);
 		setVisible(true);
+		
+		// Automatic starting
+		if(isPlay == true) {
+			clip.start();
+		}
 	}
 
 	private void createMenuBar() {
@@ -86,15 +93,15 @@ public class FandomDiaryApp extends JFrame {
 		headerBtns = new ButtonFilledWithImage[] { new ButtonFilledWithImage("public/btn_play.png"),
 				new ButtonFilledWithImage("public/btn_stop.png"), new ButtonFilledWithImage("public/btn_again.png"), };
 		slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
-
-		MusicButtonListener musicListener = new MusicButtonListener();
+		
+		musicListener = new MusicButtonListener();
 		for (ButtonFilledWithImage btn : headerBtns) {
 			btn.addActionListener(musicListener);
 			headerLeft.add(btn);
 		}
+		createClip("musics/IU_Holssi.wav");
 		headerLeft.add(slider);
 
-		createClip("musics/IU_Holssi.wav");
 		th = new MusicThread(slider, clip);
 
 		// headerRight
@@ -196,14 +203,11 @@ public class FandomDiaryApp extends JFrame {
 		writeZoomIn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				 openDiaryFrame();
 				currentDiaryFrame = new DiaryFrame(mainWriteArea, mainTimeLabel, now);
 
-				// Update the current times.
 				currentDiaryFrame.addWindowListener(new WindowAdapter() {
 					@Override
 					public void windowClosed(WindowEvent we) {
-						// currentDiaryFrame이 dispose되면 시간 업데이트.
 						now = LocalDateTime.now();
 						formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
 						mainTimeLabel.setText(formattedNow);
@@ -234,20 +238,11 @@ public class FandomDiaryApp extends JFrame {
 	
 	// Method
 	private void writeDiary() {
-		try {
-			String fileName = "diaries/" + now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss")) + ".txt";
-			FileWriter fw = new FileWriter(fileName);
-			BufferedWriter writer = new BufferedWriter(fw);
-			writer.write(userInput);
-			writer.flush();
-			writer.close();
-			fw.close();
-		} catch (IOException err) {
-			err.printStackTrace();
-		}
+		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
+		DiaryWrite.writeDiary(fileNameFormatted, userInput);
+		
 		userInput = "";
 		mainWriteArea.setText(userInput);
-
 		// Update the current times.
 		now = LocalDateTime.now();
 		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));

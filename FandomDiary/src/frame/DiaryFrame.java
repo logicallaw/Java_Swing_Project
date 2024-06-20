@@ -1,24 +1,27 @@
 package frame;
 
+import method.DiaryImage;
+import method.DiaryWrite;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class DiaryFrame extends JFrame {
 	// FandomDiaryApp field
@@ -32,6 +35,9 @@ public class DiaryFrame extends JFrame {
 	private String userInput = null;
 	private String formattedNow = null;
 	private LocalDateTime now = null;
+	private String srcPath = null;
+	
+	// Listener
 
 	public DiaryFrame(JTextArea mwa, JLabel mtl, LocalDateTime n) {
 		mainWriteArea = mwa;
@@ -40,13 +46,13 @@ public class DiaryFrame extends JFrame {
 
 		userInput = mwa.getText();
 		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
-
-		setTitle("일기 작성");
+		
+		setTitle("Write");
 		setLayout(new BorderLayout(10, 10));
 
 		// diaryHeader
 		JPanel diaryHeader = new JPanel(new BorderLayout(10, 10));
-
+		diaryHeader.setBackground(new Color(239, 231, 221));
 		JButton diaryHeaderExit = new JButton("X");
 		JLabel diaryHeaderTitle = new JLabel("WRITE", JLabel.CENTER);
 		diaryHeaderTitle.setFont(new Font("Arial", Font.BOLD, 20));
@@ -58,6 +64,7 @@ public class DiaryFrame extends JFrame {
 
 		// diaryMain
 		JPanel diaryMain = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		diaryMain.setBackground(new Color(255, 245, 238));
 		diaryMainWriteArea = new JTextArea(8, 32);
 		diaryMainWriteArea.setEditable(true);
 		diaryMainWriteArea.setLineWrap(true);
@@ -68,14 +75,14 @@ public class DiaryFrame extends JFrame {
 
 		// diaryFooter
 		JPanel diaryFooter = new JPanel(new BorderLayout(10, 10));
-
+		diaryFooter.setBackground(new Color(255, 245, 238));
 		JPanel diaryFooterLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JButton[] btns = new JButton[] { new JButton("갤러리"), new JButton("위치") };
+		JButton[] diaryBtns = new JButton[] { new JButton("사진"), new JButton("위치") };
 		
-		for (int i = 0; i < btns.length; i++) {
-			diaryFooterLeftPanel.add(btns[i]);
+		for (int i = 0; i < diaryBtns.length; i++) {
+			diaryFooterLeftPanel.add(diaryBtns[i]);
 		}
-
+		
 		JPanel diaryFooterRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
 
 		JLabel numOfCharsLabel = new JLabel(Integer.toString(0));
@@ -97,6 +104,7 @@ public class DiaryFrame extends JFrame {
 		diaryMainWriteArea.setFocusable(true);
 		diaryMainWriteArea.requestFocus();
 		
+		// diaryHeader Listener
 		diaryHeaderExit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -118,19 +126,39 @@ public class DiaryFrame extends JFrame {
 				DiaryFrame.this.dispose();
 			}
 		});
+		
+		// diaryFooter Listener
+		diaryBtns[0].addActionListener(new ActionListener() {
+			private JFileChooser chooser = new JFileChooser();
+			private FileNameExtensionFilter imageFilter = new FileNameExtensionFilter("JPG & PNG", "jpg", "png");
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chooser.setFileFilter(imageFilter);
+				int result = chooser.showOpenDialog(null);
+				if(result != JFileChooser.APPROVE_OPTION) {
+					JOptionPane.showMessageDialog(null, "You didn't chooser image.", "Notice", JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+				srcPath = chooser.getSelectedFile().getPath();
+				DiaryFrame.this.diaryMainWriteArea.setFocusable(true);
+				DiaryFrame.this.diaryMainWriteArea.requestFocus();
+			}
+		});
 	}
 	private void writeDiary() {
-		try {
-			String fileName = "diaries/" + now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss")) + ".txt";
-			FileWriter fw = new FileWriter(fileName);
-			BufferedWriter writer = new BufferedWriter(fw);
-			writer.write(userInput);
-			writer.flush();
-			writer.close();
-			fw.close();
-		} catch (IOException err) {
-			err.printStackTrace();
+		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
+		
+		// Write Text
+		DiaryWrite.writeDiary(fileNameFormatted, userInput);
+		
+		// Write Image
+		if(srcPath != null) {
+			int dotIndex = srcPath.lastIndexOf(".");
+			String srcExtension = srcPath.substring(dotIndex);
+			String destPath = "images/" + fileNameFormatted + srcExtension;
+			DiaryImage.copyImage(srcPath, destPath);
 		}
+		
 		userInput = "";
 		mainWriteArea.setText(userInput);
 		diaryMainWriteArea.setText(userInput);
