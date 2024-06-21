@@ -189,7 +189,6 @@ public class FandomDiaryApp extends JFrame {
 		mainGallery.setBackground(new Color(255, 245, 238));
 
 		FileDiary.getFilePath(diariesPath, imagesPath);
-
 		FileDiary.loadTexts(diariesPath, diariesJLabel);
 		FileDiary.loadImages(imagesPath, imagesIcons);
 

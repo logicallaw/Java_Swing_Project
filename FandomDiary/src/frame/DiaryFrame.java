@@ -158,7 +158,7 @@ public class DiaryFrame extends JFrame{
 		//Write Text and Image
 		Diary.writeDiary(fileNameFormatted, userInput);
 		Diary.writeImage(fileNameFormatted, srcPath);
-
+		
 		userInput = "";
 		mainWriteArea.setText(userInput);
 		diaryMainWriteArea.setText(userInput);

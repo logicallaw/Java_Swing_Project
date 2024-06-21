@@ -17,7 +17,7 @@ public class FileDiary {
 		File dir = new File("diaries");
 		File[] subFiles = dir.listFiles();
 		for (File subFile : subFiles) {
-			if (subFile.getName().equals(".DS_Store")) {
+			if (subFile.getName().equals(".DS_Store")) { //If your computer is MacOS, we must find ".DS_Store" which is not text or image.
 				continue;
 			}
 			diariesPath.add(subFile.getName());
@@ -33,7 +33,6 @@ public class FileDiary {
 			}
 			imagesPath.add(subFile.getName());
 		}
-	    //https://reakwon.tistory.com/153
 		Collections.sort(imagesPath);
 	}
 	
