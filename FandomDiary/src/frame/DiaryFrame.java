@@ -1,6 +1,8 @@
 package frame;
-import app.ButtonFilledWithImage;
+import lib.ButtonFilledWithImage;
 import method.Diary;
+import method.FileDiary;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -11,7 +13,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -26,6 +30,12 @@ public class DiaryFrame extends JFrame{
 	// FandomDiaryApp field
 	private JTextArea mainWriteArea = null;
 	private JLabel mainTimeLabel = null;
+	private Vector<String> diariesPath = null;
+	private Vector<String> imagesPath = null;
+	
+	private Vector<JLabel> diariesJLabel = null;
+	private Vector<ImageIcon> imagesIcons = null;
+	private int postIndex;
 
 	// DiaryFrame field
 	private JTextArea diaryMainWriteArea = null;
@@ -38,10 +48,16 @@ public class DiaryFrame extends JFrame{
 	
 	// Listener
 
-	public DiaryFrame(JTextArea mwa, JLabel mtl, LocalDateTime n) {
+	public DiaryFrame(JTextArea mwa, JLabel mtl, LocalDateTime n, Vector<String> dp, Vector<String> ip, Vector<JLabel> dj,
+			Vector<ImageIcon> iI, int postIndex) {
 		mainWriteArea = mwa;
 		mainTimeLabel = mtl;
 		now = n;
+		diariesPath = dp;
+		imagesPath = ip;
+		diariesJLabel = dj;
+		imagesIcons = iI;
+		this.postIndex = postIndex;
 
 		userInput = mwa.getText();
 		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
@@ -158,6 +174,10 @@ public class DiaryFrame extends JFrame{
 		//Write Text and Image
 		Diary.writeDiary(fileNameFormatted, userInput);
 		Diary.writeImage(fileNameFormatted, srcPath);
+
+		FileDiary.getFilePath(diariesPath, imagesPath);
+		FileDiary.addTexts(diariesPath, diariesJLabel, postIndex);
+		FileDiary.addImages(imagesPath, imagesIcons, postIndex);
 		
 		userInput = "";
 		mainWriteArea.setText(userInput);

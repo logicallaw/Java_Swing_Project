@@ -1,5 +1,7 @@
 package app;
 
+import lib.RoundedBorder;
+import lib.ButtonFilledWithImage;
 import frame.EditLabelDialog;
 import method.FileDiary;
 import method.Diary;
@@ -21,10 +23,13 @@ import javax.sound.sampled.*;
 public class FandomDiaryApp extends JFrame {
 	// Frame field
 	private Container c = getContentPane();
-	private Vector<JLabel> diariesJLabel = new Vector<JLabel>();
 	private Vector<String> diariesPath = new Vector<String>();
 	private Vector<String> imagesPath = new Vector<String>();
+	
+	private Vector<JLabel> diariesJLabel = new Vector<JLabel>();
 	private Vector<ImageIcon> imagesIcons = new Vector<ImageIcon>();
+	private JPanel postPanel = null;
+	private int postIndex = 0;
 
 	// header field
 	private Clip clip = null;
@@ -149,10 +154,10 @@ public class FandomDiaryApp extends JFrame {
 		mainWrite.setBackground(new Color(255, 239, 219));
 
 		mainWriteArea.setBackground(new Color(255, 239, 219));
-		Color borderColor = new Color(250, 214, 189);
-		int borderWidth = 1;
-		LineBorder border = new LineBorder(borderColor, borderWidth, true);
-		mainWriteArea.setBorder(border);
+//		Color borderColor = new Color(250, 214, 189);
+//		int borderWidth = 5;
+//		LineBorder border = new LineBorder(borderColor, borderWidth, true);
+//		mainWriteArea.setBorder(border);
 		mainWriteArea.setFont(new Font("Roboto", Font.PLAIN, 15));
 
 		JPanel mainWriteFooter = new JPanel(new BorderLayout(10, 10));
@@ -189,22 +194,27 @@ public class FandomDiaryApp extends JFrame {
 		mainGallery.setBackground(new Color(255, 245, 238));
 
 		FileDiary.getFilePath(diariesPath, imagesPath);
-		FileDiary.loadTexts(diariesPath, diariesJLabel);
-		FileDiary.loadImages(imagesPath, imagesIcons);
+		FileDiary.addTexts(diariesPath, diariesJLabel, postIndex);
+		FileDiary.addImages(imagesPath, imagesIcons, postIndex);
 
-		JPanel postPanel = new JPanel();
+		postPanel = new JPanel();
 		postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
-
-		for (int i = 0; i < imagesIcons.size(); i++) {
-			JPanel post = new JPanel(new BorderLayout(10, 10));
-			post.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			JLabel postImage = new JLabel(imagesIcons.get(i));
-			JLabel postText = diariesJLabel.get(i);
-			postText.setFont(new Font("Roboto", Font.PLAIN, 15));
-			post.add(postImage, BorderLayout.WEST);
-			post.add(postText, BorderLayout.CENTER);
-			postPanel.add(post, 0);
-		}
+		
+		postIndex = FileDiary.updatePosts(diariesJLabel, imagesIcons, postPanel, postIndex);
+//		for (int i = 0; i < imagesIcons.size(); i++) {
+//			JPanel post = new JPanel(new BorderLayout(10, 10));
+//			post.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+//			
+//			JLabel postImage = new JLabel(imagesIcons.get(i));
+//			JLabel postText = diariesJLabel.get(i);
+//			postText.setFont(new Font("Roboto", Font.PLAIN, 15));
+//			
+//			post.add(postImage, BorderLayout.WEST);
+//			post.add(postText, BorderLayout.CENTER);
+//			
+//			postPanel.add(post, 0);
+//			postIndex++;
+//		}
 
 		JScrollPane scrollPost = new JScrollPane(postPanel);
 		// https://velog.io/@jmkim463/swing-JScrollPane
@@ -227,13 +237,14 @@ public class FandomDiaryApp extends JFrame {
 		writeZoomIn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentDiaryFrame = new DiaryFrame(mainWriteArea, mainTimeLabel, now);
+				currentDiaryFrame = new DiaryFrame(mainWriteArea, mainTimeLabel, now, diariesPath, imagesPath, diariesJLabel, imagesIcons, postIndex);
 				currentDiaryFrame.addWindowListener(new WindowAdapter() {
 					@Override
 					public void windowClosed(WindowEvent we) {
 						now = LocalDateTime.now();
 						formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
 						mainTimeLabel.setText(formattedNow);
+						postIndex = FileDiary.updatePosts(diariesJLabel, imagesIcons, postPanel, postIndex);
 					}
 				});
 			}
@@ -313,10 +324,16 @@ public class FandomDiaryApp extends JFrame {
 
 		// Write Text
 		Diary.writeDiary(fileNameFormatted, userInput);
-
 		// Write Image
 		Diary.writeImage(fileNameFormatted, srcPath);
-
+		
+		FileDiary.getFilePath(diariesPath, imagesPath);
+		FileDiary.addTexts(diariesPath, diariesJLabel, postIndex);
+		FileDiary.addImages(imagesPath, imagesIcons, postIndex);
+		
+		// Update post
+		postIndex = FileDiary.updatePosts(diariesJLabel, imagesIcons, postPanel, postIndex);
+		
 		userInput = "";
 		mainWriteArea.setText(userInput);
 

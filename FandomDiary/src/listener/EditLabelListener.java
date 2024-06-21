@@ -1,4 +1,4 @@
-package MyListener;
+package listener;
 
 import java.awt.event.*;
 import javax.swing.*;

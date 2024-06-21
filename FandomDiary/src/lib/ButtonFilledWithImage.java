@@ -1,9 +1,7 @@
-package app;
+package lib;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
 
 public class ButtonFilledWithImage extends JButton {
 	public ButtonFilledWithImage(String pathName, int width, int height) {
@@ -21,4 +19,3 @@ public class ButtonFilledWithImage extends JButton {
 	}
 
 }
-
