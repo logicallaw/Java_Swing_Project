@@ -55,7 +55,7 @@ public class FileDiary {
 			} catch (IOException err) {
 				err.printStackTrace();
 			}
-			int sbIndex = (sb.length() > 20) ? 100 : sb.length();
+			int sbIndex = (sb.length() > 20) ? 20 : sb.length();
 			JLabel diary = new JLabel(sb.substring(0, sbIndex));
 			diariesJLabel.add(diary);
 		}

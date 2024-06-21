@@ -1,5 +1,6 @@
 package app;
 
+import frame.EditLabelDialog;
 import method.FileDiary;
 import method.Diary;
 import thread.MusicThread;
@@ -8,6 +9,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.border.LineBorder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,6 +43,7 @@ public class FandomDiaryApp extends JFrame {
 	private String formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
 	private JLabel mainTimeLabel = new JLabel(formattedNow);
 	private String srcPath = null;
+	private JButton mainWriteImageButton = new JButton("Image");
 
 	// DiaryFrame Object
 	private DiaryFrame currentDiaryFrame = null;
@@ -87,13 +90,14 @@ public class FandomDiaryApp extends JFrame {
 	private void createHeaderPanel() {
 		// headerPanel
 		JPanel headerPanel = new JPanel(new BorderLayout(10, 10));
-		headerPanel.setBackground(new Color(242, 230, 216));
+		headerPanel.setBackground(new Color(128, 233, 238));
 
 		// headerLeft
 		JPanel headerLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-		headerLeft.setBackground(new Color(242, 230, 216));
-		headerBtns = new ButtonFilledWithImage[] { new ButtonFilledWithImage("public/btn_play.png"),
-				new ButtonFilledWithImage("public/btn_stop.png"), new ButtonFilledWithImage("public/btn_again.png"), };
+		headerLeft.setBackground(new Color(128, 233, 238));
+		headerBtns = new ButtonFilledWithImage[] { new ButtonFilledWithImage("public/btn_play.png", 50, 50),
+				new ButtonFilledWithImage("public/btn_stop.png", 50, 50),
+				new ButtonFilledWithImage("public/btn_replay.png", 50, 50)};
 		slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
 
 		musicListener = new MusicButtonListener();
@@ -101,23 +105,25 @@ public class FandomDiaryApp extends JFrame {
 			btn.addActionListener(musicListener);
 			headerLeft.add(btn);
 		}
+//		JLabel headerGIFLabel = new JLabel(new ImageIcon("public/music.gif"));
+//		headerGIFLabel.setPreferredSize(new Dimension(50,50));
 		createClip("musics/IU_Holssi.wav");
 		headerLeft.add(slider);
-
+		
+//		headerLeft.add(headerGIFLabel);
+		
 		th = new MusicThread(slider, clip);
 
-		// headerRight
-		JPanel headerRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-		headerRight.setBackground(new Color(239, 231, 221));
-		JLabel titleLabel = new JLabel("Fandom Diary");
-		titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-		headerRight.add(titleLabel);
-		headerRight.add(new JLabel("50도"));
-		settingBtn = new JButton("설정");
-		headerRight.add(settingBtn); // 이미지
+//		// headerRight
+//		JPanel headerRight = new JPanel(new FlowLayout(FlowLayout.CENTER));
+//		headerRight.setBackground(new Color(244,245,228));
+//		headerRight.setSize(300,400);
+//		ButtonFilledWithImage headerRightTitle = new ButtonFilledWithImage("public/label_title.png", 30, 30);
+//		headerRight.add(headerRightTitle);
+////		settingBtn = new JButton("설정");
 
 		headerPanel.add(headerLeft, BorderLayout.WEST);
-		headerPanel.add(headerRight, BorderLayout.EAST);
+//		headerPanel.add(headerRight, BorderLayout.EAST);
 		c.add(headerPanel, BorderLayout.NORTH);
 
 		slider.addChangeListener(new ChangeListener() {
@@ -134,7 +140,7 @@ public class FandomDiaryApp extends JFrame {
 
 	private void createMainPanel() {
 		JPanel main = new JPanel();
-		main.setLayout(new BorderLayout(10, 10));
+		main.setLayout(new BorderLayout());
 		main.setBackground(new Color(255, 245, 238));
 
 		// mainWrite
@@ -147,15 +153,21 @@ public class FandomDiaryApp extends JFrame {
 		int borderWidth = 1;
 		LineBorder border = new LineBorder(borderColor, borderWidth, true);
 		mainWriteArea.setBorder(border);
-		mainWriteArea.setFont(new Font("Arial", Font.PLAIN, 15));
+		mainWriteArea.setFont(new Font("Roboto", Font.PLAIN, 15));
 
 		JPanel mainWriteFooter = new JPanel(new BorderLayout(10, 10));
 		mainWriteFooter.setBackground(new Color(255, 239, 219));
 
 		JPanel mainWriteFooterLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		mainWriteFooterLeft.add(new JButton("사진"));
-		mainWriteFooterLeft.add(new JButton("위치"));
-		JButton writeZoomIn = new JButton("확대");
+		
+		mainWriteImageButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
+		mainWriteFooterLeft.add(mainWriteImageButton);
+		JButton mainWriteLocateButton = new JButton("Locate");
+		mainWriteLocateButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
+		mainWriteFooterLeft.add(mainWriteLocateButton);
+
+		JButton writeZoomIn = new JButton("Zoom In");
+		writeZoomIn.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
 		mainWriteFooterLeft.add(writeZoomIn);
 		mainWriteFooterLeft.setBackground(new Color(255, 239, 219));
 
@@ -167,34 +179,40 @@ public class FandomDiaryApp extends JFrame {
 		mainWriteFooter.add(mainWriteFooterRight, BorderLayout.EAST);
 
 		mainWrite.add(new JScrollPane(mainWriteArea), BorderLayout.CENTER);
-		JButton mainWriteButton = new JButton("작성");
+		JButton mainWriteButton = new JButton("Write");
+		mainWriteButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
 		mainWrite.add(mainWriteButton, BorderLayout.EAST);
 		mainWrite.add(mainWriteFooter, BorderLayout.SOUTH);
 
 		// mainGallery
 		JPanel mainGallery = new JPanel(new BorderLayout(10, 10));
 		mainGallery.setBackground(new Color(255, 245, 238));
-		
+
 		FileDiary.getFilePath(diariesPath, imagesPath);
-		
+
 		FileDiary.loadTexts(diariesPath, diariesJLabel);
 		FileDiary.loadImages(imagesPath, imagesIcons);
-		
+
 		JPanel postPanel = new JPanel();
 		postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
-		
-		for(int i = 0; i < imagesIcons.size(); i++) {
-			JPanel post = new JPanel(new BorderLayout(10,10));
-	        post.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-	        JLabel postImage = new JLabel(imagesIcons.get(i));
-	        JLabel postText = diariesJLabel.get(i);
-	        post.add(postImage, BorderLayout.WEST);
-	        post.add(postText, BorderLayout.CENTER);
-	        postPanel.add(post);
+
+		for (int i = 0; i < imagesIcons.size(); i++) {
+			JPanel post = new JPanel(new BorderLayout(10, 10));
+			post.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			JLabel postImage = new JLabel(imagesIcons.get(i));
+			JLabel postText = diariesJLabel.get(i);
+			postText.setFont(new Font("Roboto", Font.PLAIN, 15));
+			post.add(postImage, BorderLayout.WEST);
+			post.add(postText, BorderLayout.CENTER);
+			postPanel.add(post, 0);
 		}
-		
+
 		JScrollPane scrollPost = new JScrollPane(postPanel);
-		scrollPost.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		// https://velog.io/@jmkim463/swing-JScrollPane
+		scrollPost.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		JScrollBar jsb = scrollPost.getVerticalScrollBar();
+		jsb.setUnitIncrement(8);
+
 		mainGallery.add(scrollPost, BorderLayout.CENTER);
 		main.add(mainWrite, BorderLayout.NORTH);
 		main.add(mainGallery, BorderLayout.CENTER);
@@ -226,15 +244,66 @@ public class FandomDiaryApp extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				writeDiary();
+				FandomDiaryApp.this.mainWriteArea.setFocusable(true);
+				FandomDiaryApp.this.mainWriteArea.requestFocus();
+				repaint();
+				revalidate();
+			}
+		});
+
+		mainWriteImageButton.addActionListener(new ActionListener() {
+			private JFileChooser chooser = new JFileChooser();
+			private FileNameExtensionFilter imageFilter = new FileNameExtensionFilter("JPG & PNG", "jpg", "png");
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chooser.setFileFilter(imageFilter);
+				int result = chooser.showOpenDialog(null);
+				if (result != JFileChooser.APPROVE_OPTION) {
+					JOptionPane.showMessageDialog(null, "You didn't chooser image.", "Notice",
+							JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+				srcPath = chooser.getSelectedFile().getPath();
+				FandomDiaryApp.this.mainWriteArea.setFocusable(true);
+				FandomDiaryApp.this.mainWriteArea.requestFocus();
 			}
 		});
 	}
 
 	private void createSideBarPanel() {
-		JPanel sidebarPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		sidebarPanel.setBackground(new Color(245, 222, 179));
-		sidebarPanel.add(new JButton("1"));
-		sidebarPanel.add(new JButton("2"));
+		JPanel sidebarPanel = new JPanel();
+		sidebarPanel.setBackground(new Color(236, 161, 163));
+		sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
+		sidebarPanel.setPreferredSize(new Dimension(200, 300));
+
+		ButtonFilledWithImage sbProfile = new ButtonFilledWithImage("public/default_image.jpg", 100, 100);
+		// https://ldne.tistory.com/56
+		sbProfile.setAlignmentX(Component.CENTER_ALIGNMENT);
+		JLabel[] sbLabels = new JLabel[] { new JLabel("IU"), new JLabel("93.05.16"), new JLabel("Be happy!"),
+				new JLabel("I like Kimchi stew and Shabu-Shabu") };
+		
+		for (JLabel la : sbLabels) {
+			la.setFont(new Font("Comic Sans MS", Font.BOLD, 13));
+			la.setAlignmentX(Component.CENTER_ALIGNMENT);
+			la.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					EditLabelDialog editLabelDialog = new EditLabelDialog(FandomDiaryApp.this, la);
+					editLabelDialog.setVisible(true);
+					repaint();
+					revalidate();
+				}
+			});
+		}
+
+		// https://www.cs.rutgers.edu/courses/111/classes/fall_2011_tjang/texts/notes-java/GUI/layouts/42boxlayout-spacing.html
+		sidebarPanel.add(sbProfile);
+		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+		for (JLabel la : sbLabels) {
+			sidebarPanel.add(la);
+			sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+		}
 
 		c.add(sidebarPanel, BorderLayout.WEST);
 	}
@@ -242,16 +311,20 @@ public class FandomDiaryApp extends JFrame {
 	// Method
 	private void writeDiary() {
 		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
+
+		// Write Text
 		Diary.writeDiary(fileNameFormatted, userInput);
-		
+
+		// Write Image
+		Diary.writeImage(fileNameFormatted, srcPath);
+
 		userInput = "";
 		mainWriteArea.setText(userInput);
+
 		// Update the current times.
 		now = LocalDateTime.now();
 		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
 		mainTimeLabel.setText(formattedNow);
-		repaint();
-		revalidate();
 	}
 
 	private void createClip(String pathName) {

@@ -1,5 +1,5 @@
 package frame;
-
+import app.ButtonFilledWithImage;
 import method.Diary;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -47,42 +47,50 @@ public class DiaryFrame extends JFrame{
 		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
 		
 		setTitle("Write");
-		setLayout(new BorderLayout(10, 10));
-
+		setLayout(new BorderLayout());
+		setBackground(new Color(229,207,153));
+		
 		// diaryHeader
 		JPanel diaryHeader = new JPanel(new BorderLayout(10, 10));
-		diaryHeader.setBackground(new Color(239, 231, 221));
-		JButton diaryHeaderExit = new JButton("X");
+		diaryHeader.setBackground(new Color(229,207,153));
+		ButtonFilledWithImage[] diaryHeaderBtns = new ButtonFilledWithImage[] {
+				new ButtonFilledWithImage("public/btn_exit.png", 50, 50),
+				new ButtonFilledWithImage("public/btn_write.png", 50, 50)
+		};
 		JLabel diaryHeaderTitle = new JLabel("WRITE", JLabel.CENTER);
-		diaryHeaderTitle.setFont(new Font("Arial", Font.BOLD, 20));
-		JButton diaryHeaderWrite = new JButton("V");
+		diaryHeaderTitle.setFont(new Font("Comic Sans MS", Font.BOLD, 20));
 		
-		diaryHeader.add(diaryHeaderExit, BorderLayout.WEST);
+		diaryHeader.add(diaryHeaderBtns[0], BorderLayout.WEST);
 		diaryHeader.add(diaryHeaderTitle, BorderLayout.CENTER);
-		diaryHeader.add(diaryHeaderWrite, BorderLayout.EAST);
+		diaryHeader.add(diaryHeaderBtns[1], BorderLayout.EAST);
 
 		// diaryMain
 		JPanel diaryMain = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		diaryMain.setBackground(new Color(255, 245, 238));
-		diaryMainWriteArea = new JTextArea(8, 32);
+		diaryMainWriteArea = new JTextArea(8, 20);
 		diaryMainWriteArea.setEditable(true);
 		diaryMainWriteArea.setLineWrap(true);
 		diaryMainWriteArea.setWrapStyleWord(true);
-		diaryMainWriteArea.setFont(new Font("Arial", Font.PLAIN, 20));
+		diaryMainWriteArea.setFont(new Font("Roboto", Font.PLAIN, 20));
 		diaryMainWriteArea.setText(userInput);
 		diaryMain.add(new JScrollPane(diaryMainWriteArea));
 
 		// diaryFooter
 		JPanel diaryFooter = new JPanel(new BorderLayout(10, 10));
-		diaryFooter.setBackground(new Color(255, 245, 238));
+		diaryFooter.setBackground(new Color(229,221,175));
 		JPanel diaryFooterLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JButton[] diaryBtns = new JButton[] { new JButton("사진"), new JButton("위치") };
+		diaryFooterLeftPanel.setBackground(new Color(229,221,175));
+		ButtonFilledWithImage[] diaryFooterBtns = new ButtonFilledWithImage[] {
+				new ButtonFilledWithImage("public/btn_diaryLoadImage.png", 50, 50),
+				new ButtonFilledWithImage("public/btn_mainLoadImage.png", 100, 50)
+		};
 		
-		for (int i = 0; i < diaryBtns.length; i++) {
-			diaryFooterLeftPanel.add(diaryBtns[i]);
+		for(ButtonFilledWithImage diaryFooterBtn : diaryFooterBtns) {
+			diaryFooterLeftPanel.add(diaryFooterBtn);
 		}
-		
+
 		JPanel diaryFooterRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+		diaryFooterRightPanel.setBackground(new Color(229,221,175));
 
 		JLabel numOfCharsLabel = new JLabel(Integer.toString(mainWriteArea.getText().length()));
 		diaryFooterRightPanel.add(numOfCharsLabel);
@@ -104,7 +112,7 @@ public class DiaryFrame extends JFrame{
 		diaryMainWriteArea.requestFocus();
 		
 		// diaryHeader Listener
-		diaryHeaderExit.addActionListener(new ActionListener() {
+		diaryHeaderBtns[0].addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mainWriteArea.setText(userInput);
@@ -118,7 +126,7 @@ public class DiaryFrame extends JFrame{
 				userInput = diaryMainWriteArea.getText();
 			}
 		});
-		diaryHeaderWrite.addActionListener(new ActionListener() {
+		diaryHeaderBtns[1].addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				writeDiary();
@@ -127,7 +135,7 @@ public class DiaryFrame extends JFrame{
 		});
 		
 		// diaryFooter Listener
-		diaryBtns[0].addActionListener(new ActionListener() {
+		diaryFooterBtns[0].addActionListener(new ActionListener() {
 			private JFileChooser chooser = new JFileChooser();
 			private FileNameExtensionFilter imageFilter = new FileNameExtensionFilter("JPG & PNG", "jpg", "png");
 			@Override
@@ -147,7 +155,7 @@ public class DiaryFrame extends JFrame{
 	private void writeDiary() {
 		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
 		
-		// Write Text
+		//Write Text
 		Diary.writeDiary(fileNameFormatted, userInput);
 		
 		// Write Image
@@ -158,7 +166,7 @@ public class DiaryFrame extends JFrame{
 			Diary.copyImage(srcPath, destPath);
 		} else {
 			String destPath = "images/" + fileNameFormatted + ".jpg";
-			Diary.copyImage("config/image/default_image.jpg", destPath);
+			Diary.copyImage("public/default_image.jpg", destPath);
 		}
 		
 		userInput = "";
