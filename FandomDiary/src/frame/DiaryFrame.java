@@ -155,20 +155,10 @@ public class DiaryFrame extends JFrame{
 	private void writeDiary() {
 		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
 		
-		//Write Text
+		//Write Text and Image
 		Diary.writeDiary(fileNameFormatted, userInput);
-		
-		// Write Image
-		if(srcPath != null) {
-			int dotIndex = srcPath.lastIndexOf(".");
-			String srcExtension = srcPath.substring(dotIndex);
-			String destPath = "images/" + fileNameFormatted + srcExtension;
-			Diary.copyImage(srcPath, destPath);
-		} else {
-			String destPath = "images/" + fileNameFormatted + ".jpg";
-			Diary.copyImage("public/default_image.jpg", destPath);
-		}
-		
+		Diary.writeImage(fileNameFormatted, srcPath);
+
 		userInput = "";
 		mainWriteArea.setText(userInput);
 		diaryMainWriteArea.setText(userInput);
