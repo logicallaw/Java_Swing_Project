@@ -18,6 +18,7 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,11 +28,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class DiaryFrame extends JFrame {
+public class DiaryDialog extends JDialog {
 	// FandomDiaryApp field
 	private JTextArea mainWriteArea = null;
+	private JLabel mainTimeLabel = null;
 	private Vector<String> diariesPath = null;
 	private Vector<String> imagesPath = null;
+
 	private Vector<JLabel> diariesJLabel = null;
 	private Vector<ImageIcon> imagesIcons = null;
 	private int postIndex;
@@ -39,33 +42,29 @@ public class DiaryFrame extends JFrame {
 	// DiaryFrame field
 	private JTextArea diaryMainWriteArea = null;
 	private JLabel diaryTimeLabel = null;
+
+	private String userInput = null;
 	private String formattedNow = null;
 	private LocalDateTime now = null;
-
-	private String userInput = "";
 	private String srcPath = null;
-	private boolean isClickedWrite = false;
 
-	public DiaryFrame(JFrame frame, JTextArea mwa, Vector<String> dp, Vector<String> ip, Vector<JLabel> dj,
-			Vector<ImageIcon> iI, LocalDateTime n, int pIx, String srPh) {
+	public DiaryDialog(JFrame frame, JTextArea mwa, JLabel mtl, LocalDateTime n, Vector<String> dp, Vector<String> ip,
+			Vector<JLabel> dj, Vector<ImageIcon> iI, int postIndex) {
+		super(frame, "WRITE", true);
 		mainWriteArea = mwa;
-
+		mainTimeLabel = mtl;
+		now = n;
 		diariesPath = dp;
 		imagesPath = ip;
 		diariesJLabel = dj;
 		imagesIcons = iI;
-
-		now = n;
-		postIndex = pIx;
-		srcPath = srPh;
+		this.postIndex = postIndex;
 
 		userInput = mwa.getText();
 		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
 
-		setTitle("Write");
 		setLayout(new BorderLayout());
 		setBackground(new Color(229, 207, 153));
-
 		// diaryHeader
 		JPanel diaryHeader = new JPanel(new BorderLayout(10, 10));
 		diaryHeader.setBackground(new Color(229, 207, 153));
@@ -78,7 +77,6 @@ public class DiaryFrame extends JFrame {
 		diaryHeader.add(diaryHeaderBtns[0], BorderLayout.WEST);
 		diaryHeader.add(diaryHeaderTitle, BorderLayout.CENTER);
 		diaryHeader.add(diaryHeaderBtns[1], BorderLayout.EAST);
-
 		// diaryMain
 		JPanel diaryMain = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		diaryMain.setBackground(new Color(255, 245, 238));
@@ -86,10 +84,9 @@ public class DiaryFrame extends JFrame {
 		diaryMainWriteArea.setEditable(true);
 		diaryMainWriteArea.setLineWrap(true);
 		diaryMainWriteArea.setWrapStyleWord(true);
-		diaryMainWriteArea.setFont(new Font("Comic Sans MS", Font.PLAIN, 20));
+		diaryMainWriteArea.setFont(new Font("Roboto", Font.PLAIN, 20));
 		diaryMainWriteArea.setText(userInput);
 		diaryMain.add(new JScrollPane(diaryMainWriteArea));
-
 		// diaryFooter
 		JPanel diaryFooter = new JPanel(new BorderLayout(10, 10));
 		diaryFooter.setBackground(new Color(229, 221, 175));
@@ -102,15 +99,12 @@ public class DiaryFrame extends JFrame {
 		for (ButtonFilledWithImage diaryFooterBtn : diaryFooterBtns) {
 			diaryFooterLeftPanel.add(diaryFooterBtn);
 		}
-
 		JPanel diaryFooterRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
 		diaryFooterRightPanel.setBackground(new Color(229, 221, 175));
 
 		JLabel numOfCharsLabel = new JLabel(Integer.toString(mainWriteArea.getText().length()));
-		numOfCharsLabel.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
 		diaryFooterRightPanel.add(numOfCharsLabel);
 		diaryTimeLabel = new JLabel(formattedNow);
-		diaryTimeLabel.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
 		diaryFooterRightPanel.add(diaryTimeLabel);
 
 		diaryFooter.add(diaryFooterLeftPanel, BorderLayout.WEST);
@@ -122,25 +116,17 @@ public class DiaryFrame extends JFrame {
 		add(diaryFooter, BorderLayout.SOUTH);
 
 		setSize(600, 800);
-		setVisible(true);
 		setLocationRelativeTo(frame);
+		
 		diaryMainWriteArea.setFocusable(true);
 		diaryMainWriteArea.requestFocus();
-
+		
 		// diaryHeader Listener
 		diaryHeaderBtns[0].addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mainWriteArea.setText(userInput);
-				DiaryFrame.this.dispose();
-			}
-		});
-		diaryHeaderBtns[1].addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				isClickedWrite = true;
-				writeDiary();
-				DiaryFrame.this.dispose();
+				dispose();
 			}
 		});
 		diaryMainWriteArea.addKeyListener(new KeyAdapter() {
@@ -148,6 +134,13 @@ public class DiaryFrame extends JFrame {
 			public void keyReleased(KeyEvent e) {
 				numOfCharsLabel.setText(Integer.toString(diaryMainWriteArea.getText().length()));
 				userInput = diaryMainWriteArea.getText();
+			}
+		});
+		diaryHeaderBtns[1].addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				writeDiary();
+				dispose();
 			}
 		});
 
@@ -172,26 +165,6 @@ public class DiaryFrame extends JFrame {
 		});
 	}
 
-	public String getSrcPath() {
-		return srcPath;
-	}
-
-	public String getUserInput() {
-		return userInput;
-	}
-
-	public boolean isTyping() {
-		return userInput.length() != 0;
-	}
-
-	public boolean hasImage() {
-		return srcPath != null;
-	}
-
-	public boolean isClickedWrite() {
-		return isClickedWrite;
-	}
-
 	private void writeDiary() {
 		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
 
@@ -204,9 +177,8 @@ public class DiaryFrame extends JFrame {
 		FileDiary.addImages(imagesPath, imagesIcons, postIndex);
 
 		userInput = "";
-		srcPath = null;
-//		mainWriteArea.setText(userInput);
-//		diaryMainWriteArea.setText(userInput);
+		mainWriteArea.setText(userInput);
+		diaryMainWriteArea.setText(userInput);
 
 		repaint();
 		revalidate();

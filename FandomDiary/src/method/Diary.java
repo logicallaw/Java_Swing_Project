@@ -11,7 +11,6 @@ public class Diary {
 			} else {
 				writer.write(userInput);
 			}
-			
 			writer.flush(); writer.close(); fw.close();
 		} catch (IOException err) {
 			err.printStackTrace();

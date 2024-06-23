@@ -7,7 +7,7 @@ import javax.swing.*;
 public class EditLabelDialog extends JDialog {
 	JLabel myLabel = null;
 	public EditLabelDialog(JFrame frame,JLabel myLabel) {
-		super(frame, "Edit Label");
+		super(frame, "Edit Label", true);
 		this.myLabel = myLabel;
 		setLayout(new BorderLayout(10,10));
 		
@@ -34,6 +34,7 @@ public class EditLabelDialog extends JDialog {
 		});
 		
 		setSize(300,400);
+		setLocationRelativeTo(frame);
 		dialogMainTa.setFocusable(true);
 		dialogMainTa.requestFocus();
 	}

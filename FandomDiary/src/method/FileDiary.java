@@ -56,7 +56,7 @@ public class FileDiary {
 				err.printStackTrace();
 			}
 			int sbIndex = (sb.length() > 20) ? 20 : sb.length();
-			JLabel diary = new JLabel(sb.substring(0, sbIndex));
+			JLabel diary = new JLabel(sb.substring(0));
 			diariesJLabel.add(diary);
 		}
 	}
@@ -67,7 +67,7 @@ public class FileDiary {
 			File f = new File("images/" + imagesPath.get(postIndex));
 			ImageIcon originImage = new ImageIcon("images/" + f.getName());
 			// https://wildeveloperetrain.tistory.com/289
-			Image scaledImage = originImage.getImage().getScaledInstance(400 / 4, 500 / 4, Image.SCALE_SMOOTH);
+			Image scaledImage = originImage.getImage().getScaledInstance(400 / 4, 400 / 4, Image.SCALE_SMOOTH);
 			imagesIcons.add(new ImageIcon(scaledImage));
 		}
 	}
@@ -77,10 +77,12 @@ public class FileDiary {
 		for (; postIndex < diariesJLabel.size(); postIndex++) {
 			JPanel post = new JPanel(new BorderLayout(10, 10));
 			post.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			post.setBackground(new Color(255, 230, 205));
 
 			JLabel postImage = new JLabel(imagesIcons.get(postIndex));
 			JLabel postText = diariesJLabel.get(postIndex);
-			postText.setFont(new Font("Roboto", Font.PLAIN, 15));
+			postText.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
+			postText.setBackground(new Color(255,218,185));
 
 			post.add(postImage, BorderLayout.WEST);
 			post.add(postText, BorderLayout.CENTER);

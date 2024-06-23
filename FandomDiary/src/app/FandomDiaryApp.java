@@ -6,6 +6,7 @@ import frame.EditLabelDialog;
 import method.FileDiary;
 import method.Diary;
 import thread.MusicThread;
+import frame.DiaryDialog;
 import frame.DiaryFrame;
 import java.awt.*;
 import java.awt.event.*;
@@ -25,7 +26,7 @@ public class FandomDiaryApp extends JFrame {
 	private Container c = getContentPane();
 	private Vector<String> diariesPath = new Vector<String>();
 	private Vector<String> imagesPath = new Vector<String>();
-	
+
 	private Vector<JLabel> diariesJLabel = new Vector<JLabel>();
 	private Vector<ImageIcon> imagesIcons = new Vector<ImageIcon>();
 	private JPanel postPanel = null;
@@ -36,13 +37,14 @@ public class FandomDiaryApp extends JFrame {
 	private JSlider slider = null;
 	private MusicThread th = null;
 	private ButtonFilledWithImage[] headerBtns = null;
-	private JButton settingBtn = null;
 	private Boolean isPlay = false;
 	private MusicButtonListener musicListener = null;
 
 	// main field
 	private JTextArea mainWriteArea = new JTextArea(4, 30);
 	private String userInput = null;
+	private boolean isTyping = false;
+	private boolean hasImage = false;
 	// https://dev-coco.tistory.com/31
 	private LocalDateTime now = LocalDateTime.now();
 	private String formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
@@ -88,6 +90,19 @@ public class FandomDiaryApp extends JFrame {
 			menuBar.add(menus[i]);
 		}
 
+		// Listener
+		fandomDiaryItems[2].addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (isTyping || hasImage) {
+					JOptionPane.showMessageDialog(FandomDiaryApp.this, "isTyping or hasImage!", "Quite",
+							JOptionPane.ERROR_MESSAGE);
+				} else {
+					System.exit(0);
+				}
+			}
+		});
+
 		// setJMenuBar
 		setJMenuBar(menuBar);
 	}
@@ -102,7 +117,7 @@ public class FandomDiaryApp extends JFrame {
 		headerLeft.setBackground(new Color(128, 233, 238));
 		headerBtns = new ButtonFilledWithImage[] { new ButtonFilledWithImage("public/btn_play.png", 50, 50),
 				new ButtonFilledWithImage("public/btn_stop.png", 50, 50),
-				new ButtonFilledWithImage("public/btn_replay.png", 50, 50)};
+				new ButtonFilledWithImage("public/btn_replay.png", 50, 50) };
 		slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
 
 		musicListener = new MusicButtonListener();
@@ -110,25 +125,13 @@ public class FandomDiaryApp extends JFrame {
 			btn.addActionListener(musicListener);
 			headerLeft.add(btn);
 		}
-//		JLabel headerGIFLabel = new JLabel(new ImageIcon("public/music.gif"));
-//		headerGIFLabel.setPreferredSize(new Dimension(50,50));
+
 		createClip("musics/IU_Holssi.wav");
 		headerLeft.add(slider);
-		
-//		headerLeft.add(headerGIFLabel);
-		
+
 		th = new MusicThread(slider, clip);
 
-//		// headerRight
-//		JPanel headerRight = new JPanel(new FlowLayout(FlowLayout.CENTER));
-//		headerRight.setBackground(new Color(244,245,228));
-//		headerRight.setSize(300,400);
-//		ButtonFilledWithImage headerRightTitle = new ButtonFilledWithImage("public/label_title.png", 30, 30);
-//		headerRight.add(headerRightTitle);
-////		settingBtn = new JButton("설정");
-
 		headerPanel.add(headerLeft, BorderLayout.WEST);
-//		headerPanel.add(headerRight, BorderLayout.EAST);
 		c.add(headerPanel, BorderLayout.NORTH);
 
 		slider.addChangeListener(new ChangeListener() {
@@ -154,17 +157,13 @@ public class FandomDiaryApp extends JFrame {
 		mainWrite.setBackground(new Color(255, 239, 219));
 
 		mainWriteArea.setBackground(new Color(255, 239, 219));
-//		Color borderColor = new Color(250, 214, 189);
-//		int borderWidth = 5;
-//		LineBorder border = new LineBorder(borderColor, borderWidth, true);
-//		mainWriteArea.setBorder(border);
-		mainWriteArea.setFont(new Font("Roboto", Font.PLAIN, 15));
+		mainWriteArea.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
 
 		JPanel mainWriteFooter = new JPanel(new BorderLayout(10, 10));
 		mainWriteFooter.setBackground(new Color(255, 239, 219));
 
 		JPanel mainWriteFooterLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		
+
 		mainWriteImageButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
 		mainWriteFooterLeft.add(mainWriteImageButton);
 		JButton mainWriteLocateButton = new JButton("Locate");
@@ -177,6 +176,7 @@ public class FandomDiaryApp extends JFrame {
 		mainWriteFooterLeft.setBackground(new Color(255, 239, 219));
 
 		JPanel mainWriteFooterRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		mainTimeLabel.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
 		mainWriteFooterRight.add(mainTimeLabel);
 		mainWriteFooterRight.setBackground(new Color(255, 239, 219));
 
@@ -199,28 +199,17 @@ public class FandomDiaryApp extends JFrame {
 
 		postPanel = new JPanel();
 		postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
-		
+		postPanel.setBackground(new Color(255, 245, 238));
 		postIndex = FileDiary.updatePosts(diariesJLabel, imagesIcons, postPanel, postIndex);
-//		for (int i = 0; i < imagesIcons.size(); i++) {
-//			JPanel post = new JPanel(new BorderLayout(10, 10));
-//			post.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-//			
-//			JLabel postImage = new JLabel(imagesIcons.get(i));
-//			JLabel postText = diariesJLabel.get(i);
-//			postText.setFont(new Font("Roboto", Font.PLAIN, 15));
-//			
-//			post.add(postImage, BorderLayout.WEST);
-//			post.add(postText, BorderLayout.CENTER);
-//			
-//			postPanel.add(post, 0);
-//			postIndex++;
-//		}
 
 		JScrollPane scrollPost = new JScrollPane(postPanel);
+		scrollPost.setBackground(new Color(255, 245, 238));
 		// https://velog.io/@jmkim463/swing-JScrollPane
 		scrollPost.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		JScrollBar jsb = scrollPost.getVerticalScrollBar();
-		jsb.setUnitIncrement(8);
+		JScrollBar jsbV = scrollPost.getVerticalScrollBar();
+		JScrollBar jsbH = scrollPost.getHorizontalScrollBar();
+		jsbV.setUnitIncrement(10);
+		jsbH.setUnitIncrement(10);
 
 		mainGallery.add(scrollPost, BorderLayout.CENTER);
 		main.add(mainWrite, BorderLayout.NORTH);
@@ -231,20 +220,37 @@ public class FandomDiaryApp extends JFrame {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				userInput = mainWriteArea.getText();
+				isTyping = (userInput.length() != 0) ? true : false;
 			}
 		});
 
 		writeZoomIn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentDiaryFrame = new DiaryFrame(mainWriteArea, mainTimeLabel, now, diariesPath, imagesPath, diariesJLabel, imagesIcons, postIndex);
+				currentDiaryFrame = new DiaryFrame(FandomDiaryApp.this, mainWriteArea, diariesPath, imagesPath,
+						diariesJLabel, imagesIcons, now, postIndex, srcPath);
 				currentDiaryFrame.addWindowListener(new WindowAdapter() {
 					@Override
 					public void windowClosed(WindowEvent we) {
-						now = LocalDateTime.now();
-						formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
-						mainTimeLabel.setText(formattedNow);
-						postIndex = FileDiary.updatePosts(diariesJLabel, imagesIcons, postPanel, postIndex);
+						if (currentDiaryFrame.isClickedWrite()) {
+							// Initialize to default value
+							userInput = "";
+							srcPath = null;
+							isTyping = false;
+							hasImage = false;
+							mainWriteArea.setText(userInput);
+							// Update the current time.
+							now = LocalDateTime.now();
+							formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
+							mainTimeLabel.setText(formattedNow);
+							// Update the current post.
+							postIndex = FileDiary.updatePosts(diariesJLabel, imagesIcons, postPanel, postIndex);
+						} else {
+							userInput = currentDiaryFrame.getUserInput();
+							srcPath = currentDiaryFrame.getSrcPath();
+							isTyping = currentDiaryFrame.isTyping();
+							hasImage = currentDiaryFrame.hasImage();
+						}
 					}
 				});
 			}
@@ -253,9 +259,10 @@ public class FandomDiaryApp extends JFrame {
 		mainWriteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				userInput = mainWriteArea.getText();
 				writeDiary();
-				FandomDiaryApp.this.mainWriteArea.setFocusable(true);
-				FandomDiaryApp.this.mainWriteArea.requestFocus();
+				mainWriteArea.setFocusable(true);
+				mainWriteArea.requestFocus();
 				repaint();
 				revalidate();
 			}
@@ -275,8 +282,9 @@ public class FandomDiaryApp extends JFrame {
 					return;
 				}
 				srcPath = chooser.getSelectedFile().getPath();
-				FandomDiaryApp.this.mainWriteArea.setFocusable(true);
-				FandomDiaryApp.this.mainWriteArea.requestFocus();
+				hasImage = true;
+				mainWriteArea.setFocusable(true);
+				mainWriteArea.requestFocus();
 			}
 		});
 	}
@@ -292,7 +300,7 @@ public class FandomDiaryApp extends JFrame {
 		sbProfile.setAlignmentX(Component.CENTER_ALIGNMENT);
 		JLabel[] sbLabels = new JLabel[] { new JLabel("IU"), new JLabel("93.05.16"), new JLabel("Be happy!"),
 				new JLabel("I like Kimchi stew and Shabu-Shabu") };
-		
+
 		for (JLabel la : sbLabels) {
 			la.setFont(new Font("Comic Sans MS", Font.BOLD, 13));
 			la.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -322,19 +330,20 @@ public class FandomDiaryApp extends JFrame {
 	private void writeDiary() {
 		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
 
-		// Write Text
+		// Write Text and Image
 		Diary.writeDiary(fileNameFormatted, userInput);
-		// Write Image
 		Diary.writeImage(fileNameFormatted, srcPath);
-		
+
+		// Update Post
 		FileDiary.getFilePath(diariesPath, imagesPath);
 		FileDiary.addTexts(diariesPath, diariesJLabel, postIndex);
 		FileDiary.addImages(imagesPath, imagesIcons, postIndex);
-		
-		// Update post
 		postIndex = FileDiary.updatePosts(diariesJLabel, imagesIcons, postPanel, postIndex);
-		
+
 		userInput = "";
+		srcPath = null;
+		isTyping = false;
+		hasImage = false;
 		mainWriteArea.setText(userInput);
 
 		// Update the current times.
