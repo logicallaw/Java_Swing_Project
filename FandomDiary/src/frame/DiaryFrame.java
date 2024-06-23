@@ -205,11 +205,6 @@ public class DiaryFrame extends JFrame {
 
 		userInput = "";
 		srcPath = null;
-//		mainWriteArea.setText(userInput);
-//		diaryMainWriteArea.setText(userInput);
-
-		repaint();
-		revalidate();
 	}
 
 }

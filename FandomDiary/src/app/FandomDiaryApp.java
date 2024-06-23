@@ -1,19 +1,16 @@
 package app;
 
-import lib.RoundedBorder;
 import lib.ButtonFilledWithImage;
 import frame.EditLabelDialog;
 import method.FileDiary;
 import method.Diary;
 import thread.MusicThread;
-import frame.DiaryDialog;
 import frame.DiaryFrame;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.border.LineBorder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.io.File;
@@ -251,6 +248,8 @@ public class FandomDiaryApp extends JFrame {
 							isTyping = currentDiaryFrame.isTyping();
 							hasImage = currentDiaryFrame.hasImage();
 						}
+						repaint();
+						revalidate();
 					}
 				});
 			}
