@@ -33,7 +33,7 @@ public class DiaryFrame extends JFrame {
 	private Vector<String> diariesPath = null;
 	private Vector<String> imagesPath = null;
 	private Vector<JTextArea> diariesJLabel = null;
-	private Vector<ImageIcon> imagesIcons = null;
+	private Vector<ButtonFilledWithImage> imagesBtns = null;
 	private int postIndex;
 
 	// DiaryFrame field
@@ -47,13 +47,13 @@ public class DiaryFrame extends JFrame {
 	private boolean isClickedWrite = false;
 
 	public DiaryFrame(JFrame frame, JTextArea mwa, Vector<String> dp, Vector<String> ip, Vector<JTextArea> dj,
-			Vector<ImageIcon> iI, LocalDateTime n, int pIx, String srPh) {
+			Vector<ButtonFilledWithImage> iI, LocalDateTime n, int pIx, String srPh) {
 		mainWriteArea = mwa;
 
 		diariesPath = dp;
 		imagesPath = ip;
 		diariesJLabel = dj;
-		imagesIcons = iI;
+		imagesBtns = iI;
 
 		now = n;
 		postIndex = pIx;
@@ -122,10 +122,10 @@ public class DiaryFrame extends JFrame {
 		add(diaryFooter, BorderLayout.SOUTH);
 
 		setSize(600, 800);
-		setVisible(true);
 		setLocationRelativeTo(frame);
 		diaryMainWriteArea.setFocusable(true);
 		diaryMainWriteArea.requestFocus();
+		setVisible(true);
 
 		// diaryHeader Listener
 		diaryHeaderBtns[0].addActionListener(new ActionListener() {
@@ -161,7 +161,7 @@ public class DiaryFrame extends JFrame {
 				chooser.setFileFilter(imageFilter);
 				int result = chooser.showOpenDialog(null);
 				if (result != JFileChooser.APPROVE_OPTION) {
-					JOptionPane.showMessageDialog(null, "You didn't chooser image.", "Notice",
+					JOptionPane.showMessageDialog(null, "You didn't choose a image.", "Notice",
 							JOptionPane.INFORMATION_MESSAGE);
 					return;
 				}
@@ -194,14 +194,14 @@ public class DiaryFrame extends JFrame {
 
 	private void writeDiary() {
 		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
-
+		
 		// Write Text and Image
 		Diary.writeDiary(fileNameFormatted, userInput);
 		Diary.writeImage(fileNameFormatted, srcPath);
 
 		FileDiary.getFilePath(diariesPath, imagesPath);
 		FileDiary.addTexts(diariesPath, diariesJLabel, postIndex);
-		FileDiary.addImages(imagesPath, imagesIcons, postIndex);
+		FileDiary.addImages(imagesPath, imagesBtns, postIndex);
 
 		userInput = "";
 		srcPath = null;

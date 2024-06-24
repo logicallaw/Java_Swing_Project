@@ -14,6 +14,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.io.File;
+import java.util.LinkedList;
 import java.util.Vector;
 import java.io.IOException;
 import javax.sound.sampled.*;
@@ -23,9 +24,10 @@ public class FandomDiaryApp extends JFrame {
 	private Container c = getContentPane();
 	private Vector<String> diariesPath = new Vector<String>();
 	private Vector<String> imagesPath = new Vector<String>();
-
+	private LinkedList<JPanel> postList = new LinkedList<JPanel>();
 	private Vector<JTextArea> diariesJTextArea = new Vector<JTextArea>();
-	private Vector<ImageIcon> imagesIcons = new Vector<ImageIcon>();
+//	private Vector<ImageIcon> imagesIcons = new Vector<ImageIcon>();
+	private Vector<ButtonFilledWithImage> imagesBtns = new Vector<ButtonFilledWithImage>();
 	private JPanel postPanel = null;
 	private int postIndex = 0;
 
@@ -62,7 +64,6 @@ public class FandomDiaryApp extends JFrame {
 		createSideBarPanel();
 
 		setSize(900, 900);
-		setVisible(true);
 
 		// Automatic starting
 		if (isPlay) {
@@ -70,6 +71,8 @@ public class FandomDiaryApp extends JFrame {
 		}
 		mainWriteArea.setFocusable(true);
 		mainWriteArea.requestFocus();
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 
 	private void createMenuBar() {
@@ -193,16 +196,17 @@ public class FandomDiaryApp extends JFrame {
 		// mainGallery
 		JPanel mainGallery = new JPanel(new BorderLayout(10, 10));
 		mainGallery.setBackground(new Color(255, 245, 238));
-
+		
 		FileDiary.getFilePath(diariesPath, imagesPath);
 		FileDiary.addTexts(diariesPath, diariesJTextArea, postIndex);
-		FileDiary.addImages(imagesPath, imagesIcons, postIndex);
+		FileDiary.addImages(imagesPath, imagesBtns, postIndex);
 
 		postPanel = new JPanel();
 		postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
 		postPanel.setBackground(new Color(255, 245, 238));
-		postIndex = FileDiary.updatePosts(diariesJTextArea, diariesPath, imagesIcons, postPanel, postIndex);
-
+		
+		postIndex = FileDiary.updatePosts(postList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
+		
 		JScrollPane scrollPost = new JScrollPane(postPanel);
 		scrollPost.setBackground(new Color(255, 245, 238));
 		// https://velog.io/@jmkim463/swing-JScrollPane
@@ -229,7 +233,7 @@ public class FandomDiaryApp extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				currentDiaryFrame = new DiaryFrame(FandomDiaryApp.this, mainWriteArea, diariesPath, imagesPath,
-						diariesJTextArea, imagesIcons, now, postIndex, srcPath);
+						diariesJTextArea, imagesBtns, now, postIndex, srcPath);
 				currentDiaryFrame.addWindowListener(new WindowAdapter() {
 					@Override
 					public void windowClosed(WindowEvent we) {
@@ -245,7 +249,7 @@ public class FandomDiaryApp extends JFrame {
 							formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
 							mainTimeLabel.setText(formattedNow);
 							// Update the current post.
-							postIndex = FileDiary.updatePosts(diariesJTextArea, diariesPath, imagesIcons, postPanel, postIndex);
+							postIndex = FileDiary.updatePosts(postList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
 						} else {
 							userInput = currentDiaryFrame.getUserInput();
 							srcPath = currentDiaryFrame.getSrcPath();
@@ -340,8 +344,8 @@ public class FandomDiaryApp extends JFrame {
 		// Update Post
 		FileDiary.getFilePath(diariesPath, imagesPath);
 		FileDiary.addTexts(diariesPath, diariesJTextArea, postIndex);
-		FileDiary.addImages(imagesPath, imagesIcons, postIndex);
-		postIndex = FileDiary.updatePosts(diariesJTextArea, diariesPath, imagesIcons, postPanel, postIndex);
+		FileDiary.addImages(imagesPath, imagesBtns, postIndex);
+		postIndex = FileDiary.updatePosts(postList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
 
 		userInput = "";
 		srcPath = null;
