@@ -24,7 +24,7 @@ public class FandomDiaryApp extends JFrame {
 	private Vector<String> diariesPath = new Vector<String>();
 	private Vector<String> imagesPath = new Vector<String>();
 
-	private Vector<JLabel> diariesJLabel = new Vector<JLabel>();
+	private Vector<JTextArea> diariesJTextArea = new Vector<JTextArea>();
 	private Vector<ImageIcon> imagesIcons = new Vector<ImageIcon>();
 	private JPanel postPanel = null;
 	private int postIndex = 0;
@@ -61,13 +61,15 @@ public class FandomDiaryApp extends JFrame {
 		createMainPanel();
 		createSideBarPanel();
 
-		setSize(900, 600);
+		setSize(900, 900);
 		setVisible(true);
 
 		// Automatic starting
 		if (isPlay) {
 			clip.start();
 		}
+		mainWriteArea.setFocusable(true);
+		mainWriteArea.requestFocus();
 	}
 
 	private void createMenuBar() {
@@ -155,6 +157,8 @@ public class FandomDiaryApp extends JFrame {
 
 		mainWriteArea.setBackground(new Color(255, 239, 219));
 		mainWriteArea.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
+		mainWriteArea.setLineWrap(true);
+		mainWriteArea.setWrapStyleWord(true);
 
 		JPanel mainWriteFooter = new JPanel(new BorderLayout(10, 10));
 		mainWriteFooter.setBackground(new Color(255, 239, 219));
@@ -191,13 +195,13 @@ public class FandomDiaryApp extends JFrame {
 		mainGallery.setBackground(new Color(255, 245, 238));
 
 		FileDiary.getFilePath(diariesPath, imagesPath);
-		FileDiary.addTexts(diariesPath, diariesJLabel, postIndex);
+		FileDiary.addTexts(diariesPath, diariesJTextArea, postIndex);
 		FileDiary.addImages(imagesPath, imagesIcons, postIndex);
 
 		postPanel = new JPanel();
 		postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
 		postPanel.setBackground(new Color(255, 245, 238));
-		postIndex = FileDiary.updatePosts(diariesJLabel, imagesIcons, postPanel, postIndex);
+		postIndex = FileDiary.updatePosts(diariesJTextArea, diariesPath, imagesIcons, postPanel, postIndex);
 
 		JScrollPane scrollPost = new JScrollPane(postPanel);
 		scrollPost.setBackground(new Color(255, 245, 238));
@@ -225,7 +229,7 @@ public class FandomDiaryApp extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				currentDiaryFrame = new DiaryFrame(FandomDiaryApp.this, mainWriteArea, diariesPath, imagesPath,
-						diariesJLabel, imagesIcons, now, postIndex, srcPath);
+						diariesJTextArea, imagesIcons, now, postIndex, srcPath);
 				currentDiaryFrame.addWindowListener(new WindowAdapter() {
 					@Override
 					public void windowClosed(WindowEvent we) {
@@ -241,7 +245,7 @@ public class FandomDiaryApp extends JFrame {
 							formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
 							mainTimeLabel.setText(formattedNow);
 							// Update the current post.
-							postIndex = FileDiary.updatePosts(diariesJLabel, imagesIcons, postPanel, postIndex);
+							postIndex = FileDiary.updatePosts(diariesJTextArea, diariesPath, imagesIcons, postPanel, postIndex);
 						} else {
 							userInput = currentDiaryFrame.getUserInput();
 							srcPath = currentDiaryFrame.getSrcPath();
@@ -335,9 +339,9 @@ public class FandomDiaryApp extends JFrame {
 
 		// Update Post
 		FileDiary.getFilePath(diariesPath, imagesPath);
-		FileDiary.addTexts(diariesPath, diariesJLabel, postIndex);
+		FileDiary.addTexts(diariesPath, diariesJTextArea, postIndex);
 		FileDiary.addImages(imagesPath, imagesIcons, postIndex);
-		postIndex = FileDiary.updatePosts(diariesJLabel, imagesIcons, postPanel, postIndex);
+		postIndex = FileDiary.updatePosts(diariesJTextArea, diariesPath, imagesIcons, postPanel, postIndex);
 
 		userInput = "";
 		srcPath = null;

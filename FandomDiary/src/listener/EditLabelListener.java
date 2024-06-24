@@ -7,7 +7,7 @@ public class EditLabelListener extends MouseAdapter {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		JLabel myLabel = (JLabel)e.getSource();
-		String userInput = JOptionPane.showInputDialog("입력하세요");
+		String userInput = JOptionPane.showInputDialog("Enter");
 		if(userInput == null) {
 			return;
 		} else {

@@ -32,7 +32,7 @@ public class DiaryFrame extends JFrame {
 	private JTextArea mainWriteArea = null;
 	private Vector<String> diariesPath = null;
 	private Vector<String> imagesPath = null;
-	private Vector<JLabel> diariesJLabel = null;
+	private Vector<JTextArea> diariesJLabel = null;
 	private Vector<ImageIcon> imagesIcons = null;
 	private int postIndex;
 
@@ -46,7 +46,7 @@ public class DiaryFrame extends JFrame {
 	private String srcPath = null;
 	private boolean isClickedWrite = false;
 
-	public DiaryFrame(JFrame frame, JTextArea mwa, Vector<String> dp, Vector<String> ip, Vector<JLabel> dj,
+	public DiaryFrame(JFrame frame, JTextArea mwa, Vector<String> dp, Vector<String> ip, Vector<JTextArea> dj,
 			Vector<ImageIcon> iI, LocalDateTime n, int pIx, String srPh) {
 		mainWriteArea = mwa;
 
@@ -82,12 +82,12 @@ public class DiaryFrame extends JFrame {
 		// diaryMain
 		JPanel diaryMain = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		diaryMain.setBackground(new Color(255, 245, 238));
-		diaryMainWriteArea = new JTextArea(8, 20);
-		diaryMainWriteArea.setEditable(true);
+		diaryMainWriteArea = new JTextArea(15, 36);
 		diaryMainWriteArea.setLineWrap(true);
 		diaryMainWriteArea.setWrapStyleWord(true);
 		diaryMainWriteArea.setFont(new Font("Comic Sans MS", Font.PLAIN, 20));
 		diaryMainWriteArea.setText(userInput);
+		diaryMainWriteArea.setBackground(new Color(255, 239, 219));
 		diaryMain.add(new JScrollPane(diaryMainWriteArea));
 
 		// diaryFooter
