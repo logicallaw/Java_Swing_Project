@@ -4,37 +4,14 @@ import lib.ButtonFilledWithImage;
 
 import java.util.Vector;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.awt.*;
-import java.awt.event.*;
-
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import frame.DiaryFrame;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class FileDiary {
-//	private JFrame fandomDiaryFrame = null;
-//	private JPanel postPanel = null;
-//	private LinkedList<JPanel> postList = null;
-//	private Vector<String> diariesPath = null;
-//	private Vector<JTextArea> diariesJTextArea = null;
-//	private int postIndex = 0;
-//	public FileDiary(JFrame fandomDiaryFrame,JPanel postPanel,LinkedList<JPanel> postList, Vector<String> diariesPath, Vector<JTextArea> diariesJTextArea, int postIndex) {
-//		this.fandomDiaryFrame = fandomDiaryFrame;
-//		this.postPanel = postPanel;
-//		this.postList = postList;
-//		this.diariesPath = diariesPath;
-//		this.diariesJTextArea = diariesJTextArea;
-//		this.postIndex = postIndex;
-//	}
-	
+public class FileDiary {	
 	public static void getFilePath(Vector<String> diariesPath, Vector<String> imagesPath) {
 		File dir = new File("diaries");
 		File[] subFiles = dir.listFiles();
@@ -93,9 +70,14 @@ public class FileDiary {
 		}
 	}
 	
-	public static void deleteTextAndImage(Vector<String> diariesPath, Vector<String> imagesPath, int deleteIndex) {
+	public static void deleteTextAndImage(Vector<String> diariesPath, Vector<String> imagesPath, Vector<JTextArea> diariesJTextArea, Vector<ButtonFilledWithImage> imagesBtns, int deleteIndex) {
 		File deleteText = new File(diariesPath.get(deleteIndex));
 		File deleteImage = new File(imagesPath.get(deleteIndex));
+		diariesPath.remove(deleteIndex);
+		imagesPath.remove(deleteIndex);
+		diariesJTextArea.remove(deleteIndex);
+		imagesBtns.remove(deleteIndex);
+		
 		if(deleteText.delete() && deleteImage.delete()) {
 			System.out.println("Delete is success!");
 		}
