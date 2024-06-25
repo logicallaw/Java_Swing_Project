@@ -24,12 +24,14 @@ public class FandomDiaryApp extends JFrame {
 	private Container c = getContentPane();
 	private Vector<String> diariesPath = new Vector<String>();
 	private Vector<String> imagesPath = new Vector<String>();
-	private LinkedList<JPanel> postList = new LinkedList<JPanel>();
-	private Vector<JTextArea> diariesJTextArea = new Vector<JTextArea>();
-//	private Vector<ImageIcon> imagesIcons = new Vector<ImageIcon>();
-	private Vector<ButtonFilledWithImage> imagesBtns = new Vector<ButtonFilledWithImage>();
+	
 	private JPanel postPanel = null;
-	private int postIndex = 0;
+	private LinkedList<JPanel> postIndexList = new LinkedList<JPanel>();
+	
+	private Vector<JTextArea> diariesJTextArea = new Vector<JTextArea>();
+	private Vector<ButtonFilledWithImage> imagesBtns = new Vector<ButtonFilledWithImage>();
+	
+	private static int postIndex = 0;
 
 	// header field
 	private Clip clip = null;
@@ -50,7 +52,8 @@ public class FandomDiaryApp extends JFrame {
 	private JLabel mainTimeLabel = new JLabel(formattedNow);
 	private String srcPath = null;
 	private JButton mainWriteImageButton = new JButton("Image");
-
+//	private FileDiary fileDiaryObj = null;
+	
 	// DiaryFrame Object
 	private DiaryFrame currentDiaryFrame = null;
 
@@ -204,9 +207,8 @@ public class FandomDiaryApp extends JFrame {
 		postPanel = new JPanel();
 		postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
 		postPanel.setBackground(new Color(255, 245, 238));
-		
-		postIndex = FileDiary.updatePosts(postList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
-		
+		postIndex = updatePosts(postIndexList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
+
 		JScrollPane scrollPost = new JScrollPane(postPanel);
 		scrollPost.setBackground(new Color(255, 245, 238));
 		// https://velog.io/@jmkim463/swing-JScrollPane
@@ -249,7 +251,7 @@ public class FandomDiaryApp extends JFrame {
 							formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
 							mainTimeLabel.setText(formattedNow);
 							// Update the current post.
-							postIndex = FileDiary.updatePosts(postList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
+							postIndex = updatePosts(postIndexList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
 						} else {
 							userInput = currentDiaryFrame.getUserInput();
 							srcPath = currentDiaryFrame.getSrcPath();
@@ -345,8 +347,8 @@ public class FandomDiaryApp extends JFrame {
 		FileDiary.getFilePath(diariesPath, imagesPath);
 		FileDiary.addTexts(diariesPath, diariesJTextArea, postIndex);
 		FileDiary.addImages(imagesPath, imagesBtns, postIndex);
-		postIndex = FileDiary.updatePosts(postList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
-
+		postIndex = updatePosts(postIndexList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
+		
 		userInput = "";
 		srcPath = null;
 		isTyping = false;
@@ -383,6 +385,102 @@ public class FandomDiaryApp extends JFrame {
 				clip.setFramePosition(0);
 				clip.start();
 			}
+		}
+	}
+	public int updatePosts(LinkedList<JPanel> postIndexList, Vector<JTextArea> diariesJTextArea, Vector<String> diariesPath, Vector<ButtonFilledWithImage> imagesBtns, JPanel postPanel,
+			int postIndex) {
+
+//		String formattedNow = diariesPath.get(postIndex).replace(".txt", "");
+//		String[] listNow = formattedNow.split("/");
+//		int month = Integer.parseInt(listNow[1].substring(0,2));
+//		int day = Integer.parseInt(listNow[1].substring(2,4));
+//		String postNowString = getPostNowString(month, day);
+//		
+//		JLabel postNow = new JLabel(postNowString, JLabel.LEFT);
+//		postNow.setFont(new Font("Comic Sans MS", Font.BOLD, 15));
+		
+		for (; postIndex < diariesPath.size(); postIndex++) {
+			JPanel postNewPanel= new JPanel(new BorderLayout(10, 10));
+			postNewPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+			postNewPanel.setBackground(new Color(255,218,185));
+			
+			ButtonFilledWithImage postImage = imagesBtns.get(postIndex);
+			
+			// postTextPanel
+			JPanel postNewMain = new JPanel(new BorderLayout(10,10));
+			postNewMain.setBackground(new Color(255,218,185));
+			
+			JTextArea postNewMainText = diariesJTextArea.get(postIndex);
+			postNewMainText.setRows(6);
+			postNewMainText.setColumns(10);
+			postNewMainText.setLineWrap(true);
+//			postNewMainText.setWrapStyleWord(true);
+			postNewMainText.setPreferredSize(new Dimension(100,50));
+			
+			postNewMainText.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
+			postNewMainText.setBackground(new Color(255,218,185));
+			
+			JPanel postNewMainFooter = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+			postNewMainFooter.setBackground(new Color(255,218,155));
+			postNewMainFooter.setPreferredSize(new Dimension(100, 30));
+			JLabel la1 = new JLabel("INFO");
+			la1.setForeground(Color.LIGHT_GRAY);
+			la1.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
+			JButton deleteBtn = new JButton("DELETE");
+			deleteBtn.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
+			deleteBtn.setForeground(Color.LIGHT_GRAY);
+			
+			deleteBtn.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JPanel parentPanel = (JPanel)deleteBtn.getParent().getParent().getParent();
+					parentPanel.setBackground(Color.white);
+					int currentPostIndex = -1; 
+					for(int i = 0; i < postIndexList.size(); i++) {
+						if(postIndexList.get(i) == parentPanel) {
+							currentPostIndex = i;
+							break;
+						}
+					}
+					if(currentPostIndex == -1) {
+						return;
+					}
+					postPanel.remove(postIndexList.get(currentPostIndex));
+					postIndexList.remove(currentPostIndex);
+					
+					FileDiary.deleteTextAndImage(diariesPath, imagesPath, currentPostIndex);
+					
+					repaint();
+					revalidate();
+					System.out.println("Success! Index:" + currentPostIndex);
+				}
+			});
+			
+			postNewMainFooter.add(la1);
+			postNewMainFooter.add(deleteBtn);
+			postNewMain.add(postNewMainText, BorderLayout.CENTER);
+			postNewMain.add(postNewMainFooter, BorderLayout.SOUTH);
+			
+			// add:postImage, postTextPanel
+			postNewPanel.add(postImage, BorderLayout.WEST);
+			postNewPanel.add(postNewMain, BorderLayout.CENTER);
+			
+//			postPanel.add(postNow,0);
+			postPanel.add(postNewPanel, 0);
+			postIndexList.add(postNewPanel);
+		}
+		return postIndex;
+	}
+	public static String getPostNowString(int month, int day) {
+		String[] months = {
+	            "January", "February", "March", "April", "May", "June",
+	            "July", "August", "September", "October", "November", "December"
+	        };
+		if(month >= 1 && month <= 12) {
+			return months[month - 1] + " " + day;
+		}
+		else {
+			return "";
 		}
 	}
 
