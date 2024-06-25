@@ -78,13 +78,15 @@ public class DiaryEditFrame extends JFrame {
 		diaryFooter.setBackground(new Color(229, 221, 175));
 		JPanel diaryFooterLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		diaryFooterLeftPanel.setBackground(new Color(229, 221, 175));
-		ButtonFilledWithImage[] diaryFooterBtns = new ButtonFilledWithImage[] {
-				new ButtonFilledWithImage("public/btn_diaryLoadImage.png", 50, 50),
-				new ButtonFilledWithImage("public/btn_mainLoadImage.png", 100, 50) };
-
-		for (ButtonFilledWithImage diaryFooterBtn : diaryFooterBtns) {
-			diaryFooterLeftPanel.add(diaryFooterBtn);
-		}
+		ButtonFilledWithImage diaryImageButton = new ButtonFilledWithImage("public/btn_diaryLoadImage.png", 50, 50);
+//		ButtonFilledWithImage[] diaryFooterBtns = new ButtonFilledWithImage[] {
+//				new ButtonFilledWithImage("public/btn_diaryLoadImage.png", 50, 50),
+//				new ButtonFilledWithImage("public/btn_mainLoadImage.png", 100, 50) };
+//
+//		for (ButtonFilledWithImage diaryFooterBtn : diaryFooterBtns) {
+//			diaryFooterLeftPanel.add(diaryFooterBtn);
+//		}
+		diaryFooterLeftPanel.add(diaryImageButton);
 
 		JPanel diaryFooterRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
 		diaryFooterRightPanel.setBackground(new Color(229, 221, 175));
@@ -111,7 +113,13 @@ public class DiaryEditFrame extends JFrame {
 				dispose();
 			}
 		});
-		
+		diaryMainWriteArea.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				numOfCharsLabel.setText(Integer.toString(diaryMainWriteArea.getText().length()));
+				currentText = diaryMainWriteArea.getText();
+			}
+		});
 		diaryHeaderBtns[1].addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -120,7 +128,7 @@ public class DiaryEditFrame extends JFrame {
 			}
 		});
 		
-		diaryFooterBtns[0].addActionListener(new ActionListener() {
+		diaryImageButton.addActionListener(new ActionListener() {
 			private JFileChooser chooser = new JFileChooser();
 			private FileNameExtensionFilter imageFilter = new FileNameExtensionFilter("JPG & PNG", "jpg", "png");
 
@@ -142,6 +150,8 @@ public class DiaryEditFrame extends JFrame {
 		
 		setSize(600, 800);
 		setLocationRelativeTo(frame);
+		diaryMainWriteArea.setFocusable(true);
+		diaryMainWriteArea.requestFocus();
 		setVisible(true);
 	}
 	

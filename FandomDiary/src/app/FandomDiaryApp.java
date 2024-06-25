@@ -34,7 +34,7 @@ public class FandomDiaryApp extends JFrame {
 	private Vector<JTextArea> diariesJTextArea = new Vector<JTextArea>();
 	private Vector<ButtonFilledWithImage> imagesBtns = new Vector<ButtonFilledWithImage>();
 
-	private static int postIndex = 0;
+	private int postIndex = 0;
 
 	// header field
 	private Clip clip = null;
@@ -277,8 +277,8 @@ public class FandomDiaryApp extends JFrame {
 				writeDiary();
 				mainWriteArea.setFocusable(true);
 				mainWriteArea.requestFocus();
-				repaint();
-				revalidate();
+				FandomDiaryApp.this.repaint();
+				FandomDiaryApp.this.revalidate();
 			}
 		});
 
@@ -352,8 +352,11 @@ public class FandomDiaryApp extends JFrame {
 		FileDiary.getFilePath(diariesPath, imagesPath);
 		FileDiary.addTextsToVector(diariesPath, diariesJTextArea, postIndex);
 		FileDiary.addImagesToVector(imagesPath, imagesBtns, postIndex);
+		
+		System.out.println("writeDiary before:" + postIndex);
 		postIndex = updatePosts(postIndexList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
-
+		System.out.println("writeDiary after:" + postIndex);
+		
 		userInput = "";
 		srcPath = null;
 		isTyping = false;
@@ -394,7 +397,7 @@ public class FandomDiaryApp extends JFrame {
 	}
 
 	public int updatePosts(LinkedList<JPanel> postIndexList, Vector<JTextArea> diariesJTextArea,
-			Vector<String> diariesPath, Vector<ButtonFilledWithImage> imagesBtns, JPanel postPanel, int postIndex) {
+			Vector<String> diariesPath, Vector<ButtonFilledWithImage> imagesBtns, JPanel postPanel, int LocalpostIndex) {
 
 //		String formattedNow = diariesPath.get(postIndex).replace(".txt", "");
 //		String[] listNow = formattedNow.split("/");
@@ -405,12 +408,12 @@ public class FandomDiaryApp extends JFrame {
 //		JLabel postNow = new JLabel(postNowString, JLabel.LEFT);
 //		postNow.setFont(new Font("Comic Sans MS", Font.BOLD, 15));
 
-		for (; postIndex < diariesPath.size(); postIndex++) {
+		for (; LocalpostIndex < diariesPath.size(); LocalpostIndex++) {
 			JPanel postNewPanel = new JPanel(new BorderLayout(10, 10));
 			postNewPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 			postNewPanel.setBackground(new Color(255, 218, 185));
 			
-			ButtonFilledWithImage postImage = imagesBtns.get(postIndex);
+			ButtonFilledWithImage postImage = imagesBtns.get(LocalpostIndex);
 			postImage.setFocusPainted(false);
 			postImage.setBorderPainted(false);
 
@@ -418,7 +421,7 @@ public class FandomDiaryApp extends JFrame {
 			JPanel postNewMain = new JPanel(new BorderLayout(10, 10));
 			postNewMain.setBackground(new Color(255, 218, 185));
 
-			JTextArea postNewMainText = diariesJTextArea.get(postIndex);
+			JTextArea postNewMainText = diariesJTextArea.get(LocalpostIndex);
 			postNewMainText.setRows(6);
 			postNewMainText.setColumns(10);
 			postNewMainText.setLineWrap(true);
@@ -490,9 +493,10 @@ public class FandomDiaryApp extends JFrame {
 					if (currentPostIndex == -1) {
 						return;
 					}
-
+//					System.out.println(currentPostIndex);
 					postPanel.remove(postIndexList.get(currentPostIndex));
 					postIndexList.remove(currentPostIndex);
+					postIndex--;
 
 					FileDiary.deleteTextAndImage(diariesPath, imagesPath, diariesJTextArea, imagesBtns,
 							currentPostIndex);
@@ -515,7 +519,8 @@ public class FandomDiaryApp extends JFrame {
 			postPanel.add(postNewPanel, 0);
 			postIndexList.add(postNewPanel);
 		}
-		return postIndex;
+		return LocalpostIndex;
+//		return postIndexList.size();
 	}
 
 	public static String getPostNowString(int month, int day) {
