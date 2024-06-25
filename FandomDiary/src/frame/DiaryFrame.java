@@ -200,8 +200,8 @@ public class DiaryFrame extends JFrame {
 		Diary.writeImage(fileNameFormatted, srcPath);
 
 		FileDiary.getFilePath(diariesPath, imagesPath);
-		FileDiary.addTexts(diariesPath, diariesJLabel, postIndex);
-		FileDiary.addImages(imagesPath, imagesBtns, postIndex);
+		FileDiary.addTextsToVector(diariesPath, diariesJLabel, postIndex);
+		FileDiary.addImagesToVector(imagesPath, imagesBtns, postIndex);
 
 		userInput = "";
 		srcPath = null;

@@ -51,7 +51,7 @@ public class Diary {
 			err.printStackTrace();
 		}
 	}
-	public static void editText(Vector<String> diariesPath, String editedText, int currentPostIndex) {
+	public static void editTextFromFile(Vector<String> diariesPath, String editedText, int currentPostIndex) {
 		try {
 			String filePath = diariesPath.get(currentPostIndex);
 			FileWriter fw = new FileWriter(filePath);
@@ -61,6 +61,9 @@ public class Diary {
 		} catch (IOException err) {
 			err.printStackTrace();
 		}
+	}
+	public static void editImageFromFile(Vector<String> imagesPath, String currentImagePath, int currentPostIndex) {
+		Diary.copyImage(currentImagePath, imagesPath.get(currentPostIndex));
 	}
 	public static String getText(Vector<String> diariesPath, int currentPostIndex) {
 		StringBuffer sb = new StringBuffer();

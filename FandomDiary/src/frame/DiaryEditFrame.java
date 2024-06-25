@@ -34,8 +34,11 @@ public class DiaryEditFrame extends JFrame {
 	private String currentImagePath = null;
 	private int currentPostIndex;
 	private Vector<String> diariesPath = null;
+	private Vector<String> imagesPath = null;
+	private boolean isSelectedImage = false;
+	private ImageIcon nowImage = null;
 
-	public DiaryEditFrame(JFrame frame, String title, String cT, String cIP, int cI, Vector<String> dP) {
+	public DiaryEditFrame(JFrame frame, String title, String cT, String cIP, int cI, Vector<String> dP, Vector<String> iP) {
 		setTitle(title);
 		setLayout(new BorderLayout());
 		setBackground(new Color(229, 207, 153));
@@ -44,6 +47,7 @@ public class DiaryEditFrame extends JFrame {
 		currentImagePath = cIP;
 		currentPostIndex = cI;
 		diariesPath = dP;
+		imagesPath = iP;
 		
 		// diaryHeader
 		JPanel diaryHeader = new JPanel(new BorderLayout(10, 10));
@@ -129,10 +133,10 @@ public class DiaryEditFrame extends JFrame {
 							JOptionPane.INFORMATION_MESSAGE);
 					return;
 				}
+				isSelectedImage = true;
 				currentImagePath = chooser.getSelectedFile().getPath();
 				diaryMainWriteArea.setFocusable(true);
 				diaryMainWriteArea.requestFocus();
-				System.out.println(currentImagePath);
 			}
 		});
 		
@@ -143,9 +147,13 @@ public class DiaryEditFrame extends JFrame {
 	
 	public void editDiary() {
 		currentText = diaryMainWriteArea.getText();
-		Diary.editText(diariesPath, currentText, currentPostIndex);
+		Diary.editTextFromFile(diariesPath, currentText, currentPostIndex);
+		if(isSelectedImage) {
+			Diary.editImageFromFile(imagesPath, currentImagePath, currentPostIndex);
+		}
 	}
 	public String getCurrentText() {
 		return currentText;
 	}
+	
 }

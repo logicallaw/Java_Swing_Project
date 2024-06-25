@@ -36,7 +36,7 @@ public class FileDiary {
 		Collections.sort(imagesPath);
 	}
 
-	public static void addTexts(Vector<String> diariesPath, Vector<JTextArea> diariesJTextArea, int postIndex) {
+	public static void addTextsToVector(Vector<String> diariesPath, Vector<JTextArea> diariesJTextArea, int postIndex) {
 		for(; postIndex < diariesPath.size(); postIndex++) {
 			StringBuffer sb = new StringBuffer();
 			try {
@@ -62,7 +62,7 @@ public class FileDiary {
 		}
 	}
 
-	public static void addImages(Vector<String> imagesPath, Vector<ButtonFilledWithImage> imagesBtns, int postIndex) {
+	public static void addImagesToVector(Vector<String> imagesPath, Vector<ButtonFilledWithImage> imagesBtns, int postIndex) {
 
 		for(; postIndex < imagesPath.size(); postIndex++) {
 			ButtonFilledWithImage temp = new ButtonFilledWithImage(imagesPath.get(postIndex), 100, 100);

@@ -1,5 +1,6 @@
 package app;
 
+import lib.ResizedImageIcon;
 import lib.ButtonFilledWithImage;
 import lib.NonBorderButton;
 import frame.EditLabelDialog;
@@ -204,8 +205,8 @@ public class FandomDiaryApp extends JFrame {
 		mainGallery.setBackground(new Color(255, 245, 238));
 
 		FileDiary.getFilePath(diariesPath, imagesPath);
-		FileDiary.addTexts(diariesPath, diariesJTextArea, postIndex);
-		FileDiary.addImages(imagesPath, imagesBtns, postIndex);
+		FileDiary.addTextsToVector(diariesPath, diariesJTextArea, postIndex);
+		FileDiary.addImagesToVector(imagesPath, imagesBtns, postIndex);
 
 		postPanel = new JPanel();
 		postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
@@ -349,8 +350,8 @@ public class FandomDiaryApp extends JFrame {
 
 		// Update Post
 		FileDiary.getFilePath(diariesPath, imagesPath);
-		FileDiary.addTexts(diariesPath, diariesJTextArea, postIndex);
-		FileDiary.addImages(imagesPath, imagesBtns, postIndex);
+		FileDiary.addTextsToVector(diariesPath, diariesJTextArea, postIndex);
+		FileDiary.addImagesToVector(imagesPath, imagesBtns, postIndex);
 		postIndex = updatePosts(postIndexList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
 
 		userInput = "";
@@ -456,12 +457,14 @@ public class FandomDiaryApp extends JFrame {
 					String currentText = Diary.getText(diariesPath, currentPostIndex);
 					String currentImagePath = imagesPath.get(currentPostIndex);
 					DiaryEditFrame currentDiaryEditFrame = new DiaryEditFrame(FandomDiaryApp.this, "WRITE", currentText,
-							currentImagePath, currentPostIndex, diariesPath);
+							currentImagePath, currentPostIndex, diariesPath, imagesPath);
 					currentDiaryEditFrame.addWindowListener(new WindowAdapter() {
 						@Override
 						public void windowClosed(WindowEvent we) {
 							JTextArea tempTextArea = diariesJTextArea.get(currentPostIndex);
 							tempTextArea.setText(currentDiaryEditFrame.getCurrentText());
+							ButtonFilledWithImage tempImageButton = imagesBtns.get(currentPostIndex);
+							tempImageButton.setIcon(new ResizedImageIcon(currentImagePath, 100, 100));
 							repaint();
 							revalidate();
 						}
