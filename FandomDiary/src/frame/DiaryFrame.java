@@ -60,7 +60,7 @@ public class DiaryFrame extends JFrame {
 		srcPath = srPh;
 
 		userInput = mwa.getText();
-		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
+		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss SS"));
 
 		setTitle(title);
 		setLayout(new BorderLayout());
@@ -193,7 +193,7 @@ public class DiaryFrame extends JFrame {
 	}
 
 	private void writeDiary() {
-		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
+		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss_SS"));
 		
 		// Write Text and Image
 		Diary.writeDiary(fileNameFormatted, userInput);

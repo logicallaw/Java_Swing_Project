@@ -51,7 +51,7 @@ public class FandomDiaryApp extends JFrame {
 	private boolean hasImage = false;
 	// https://dev-coco.tistory.com/31
 	private LocalDateTime now = LocalDateTime.now();
-	private String formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
+	private String formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss SS"));
 	private JLabel mainTimeLabel = new JLabel(formattedNow);
 	private String srcPath = null;
 	private JButton mainWriteImageButton = new JButton("Image");
@@ -252,7 +252,7 @@ public class FandomDiaryApp extends JFrame {
 							mainWriteArea.setText(userInput);
 							// Update the current time.
 							now = LocalDateTime.now();
-							formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
+							formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss SS"));
 							mainTimeLabel.setText(formattedNow);
 							// Update the current post.
 							postIndex = updatePosts(postIndexList, diariesJTextArea, diariesPath, imagesBtns, postPanel,
@@ -342,7 +342,7 @@ public class FandomDiaryApp extends JFrame {
 
 	// Method
 	private void writeDiary() {
-		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss"));
+		String fileNameFormatted = now.format(DateTimeFormatter.ofPattern("MMdd_HHmm_ss_SS"));
 
 		// Write Text and Image
 		Diary.writeDiary(fileNameFormatted, userInput);
@@ -353,9 +353,9 @@ public class FandomDiaryApp extends JFrame {
 		FileDiary.addTextsToVector(diariesPath, diariesJTextArea, postIndex);
 		FileDiary.addImagesToVector(imagesPath, imagesBtns, postIndex);
 		
-		System.out.println("writeDiary before:" + postIndex);
+//		System.out.println("writeDiary before:" + postIndex);
 		postIndex = updatePosts(postIndexList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
-		System.out.println("writeDiary after:" + postIndex);
+//		System.out.println("writeDiary after:" + postIndex);
 		
 		userInput = "";
 		srcPath = null;
@@ -365,7 +365,7 @@ public class FandomDiaryApp extends JFrame {
 
 		// Update the current times.
 		now = LocalDateTime.now();
-		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss"));
+		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss SS"));
 		mainTimeLabel.setText(formattedNow);
 	}
 
