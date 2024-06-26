@@ -49,7 +49,7 @@ public class DiaryFrame extends JFrame {
 	public DiaryFrame(JFrame frame, String title, JTextArea mwa, Vector<String> dp, Vector<String> ip, Vector<JTextArea> dj,
 			Vector<ButtonFilledWithImage> iI, LocalDateTime n, int pIx, String srPh) {
 		mainWriteArea = mwa;
-
+		
 		diariesPath = dp;
 		imagesPath = ip;
 		diariesJLabel = dj;
@@ -60,7 +60,7 @@ public class DiaryFrame extends JFrame {
 		srcPath = srPh;
 
 		userInput = mwa.getText();
-		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm ss SS"));
+		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm"));
 
 		setTitle(title);
 		setLayout(new BorderLayout());
@@ -95,14 +95,9 @@ public class DiaryFrame extends JFrame {
 		diaryFooter.setBackground(new Color(229, 221, 175));
 		JPanel diaryFooterLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		diaryFooterLeftPanel.setBackground(new Color(229, 221, 175));
-		ButtonFilledWithImage[] diaryFooterBtns = new ButtonFilledWithImage[] {
-				new ButtonFilledWithImage("public/btn_diaryLoadImage.png", 50, 50),
-				new ButtonFilledWithImage("public/btn_mainLoadImage.png", 100, 50) };
-
-		for (ButtonFilledWithImage diaryFooterBtn : diaryFooterBtns) {
-			diaryFooterLeftPanel.add(diaryFooterBtn);
-		}
-
+		ButtonFilledWithImage diaryImageButton = new ButtonFilledWithImage("public/btn_diaryLoadImage.png", 50, 50);
+		diaryFooterLeftPanel.add(diaryImageButton);
+		
 		JPanel diaryFooterRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
 		diaryFooterRightPanel.setBackground(new Color(229, 221, 175));
 
@@ -152,7 +147,7 @@ public class DiaryFrame extends JFrame {
 		});
 
 		// diaryFooter Listener
-		diaryFooterBtns[0].addActionListener(new ActionListener() {
+		diaryImageButton.addActionListener(new ActionListener() {
 			private JFileChooser chooser = new JFileChooser();
 			private FileNameExtensionFilter imageFilter = new FileNameExtensionFilter("JPG & PNG", "jpg", "png");
 

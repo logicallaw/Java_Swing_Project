@@ -5,6 +5,10 @@ import lib.ButtonFilledWithImage;
 import java.util.Vector;
 import java.util.Collections;
 import javax.swing.*;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,7 +61,14 @@ public class FileDiary {
 			int sbIndex = (sb.length() > 430) ? 430 : sb.length();
 			JTextArea diary = new JTextArea(6, 20);
 			diary.setText(sb.substring(0, sbIndex));
+			diary.setBackground(new Color(255, 218, 185));
+			diary.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
+			diary.setRows(6);
+			diary.setColumns(10);
+			diary.setLineWrap(true);
 			diary.setEditable(false);
+			diary.setPreferredSize(new Dimension(100, 50));
+			
 			diariesJTextArea.add(diary);
 		}
 	}
@@ -83,6 +94,17 @@ public class FileDiary {
 		}
 		else {
 			System.out.println("Failed for delete.");
+		}
+	}
+	public static String getPostDayToString(String filePath) {
+		int month = Integer.valueOf(filePath.substring(8,10));
+		int day = Integer.valueOf(filePath.substring(10, 12));
+		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
+				"October", "November", "December" };
+		if (month >= 1 && month <= 12) {
+			return months[month - 1] + " " + day;
+		} else {
+			return "";
 		}
 	}
 }

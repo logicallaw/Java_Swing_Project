@@ -35,6 +35,7 @@ public class EditLabelDialog extends JDialog {
 		
 		setSize(300,400);
 		setLocationRelativeTo(frame);
+		setResizable(false);
 		dialogMainTa.setFocusable(true);
 		dialogMainTa.requestFocus();
 	}

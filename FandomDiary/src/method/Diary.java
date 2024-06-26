@@ -65,7 +65,7 @@ public class Diary {
 	public static void editImageFromFile(Vector<String> imagesPath, String currentImagePath, int currentPostIndex) {
 		Diary.copyImage(currentImagePath, imagesPath.get(currentPostIndex));
 	}
-	public static String getText(Vector<String> diariesPath, int currentPostIndex) {
+	public static String getTextFromFile(Vector<String> diariesPath, int currentPostIndex) {
 		StringBuffer sb = new StringBuffer();
 		try {
 			FileInputStream fis = new FileInputStream(diariesPath.get(currentPostIndex));
@@ -84,18 +84,4 @@ public class Diary {
 		}
 		return sb.toString();
 	}
-//	public static void editImage(Vector<String> imagesPath, String currentImagePath) {
-//		if (srcPath != null) { //if image file is selected
-//			//get file extension
-//			int dotIndex = srcPath.lastIndexOf(".");
-//			String srcExtension = srcPath.substring(dotIndex);
-//			//set destPath
-//			String destPath = "images/" + fileNameFormatted + srcExtension;
-//			//copy Image
-//			Diary.copyImage(srcPath, destPath);
-//		} else { //if image file is not selected
-//			String destPath = "images/" + fileNameFormatted + ".jpg";
-//			Diary.copyImage("public/default_image.jpg", destPath);
-//		}
-//	}
 }
