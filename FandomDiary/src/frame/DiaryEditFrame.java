@@ -28,7 +28,6 @@ import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class DiaryEditFrame extends JFrame {
-	// DiaryFrame field
 	private JTextArea diaryMainWriteArea = null;
 	private String currentText = null;
 	private String currentImagePath = null;
@@ -36,20 +35,20 @@ public class DiaryEditFrame extends JFrame {
 	private Vector<String> diariesPath = null;
 	private Vector<String> imagesPath = null;
 	private boolean isSelectedImage = false;
-	private ImageIcon nowImage = null;
 
-	public DiaryEditFrame(JFrame frame, String title, String cT, String cIP, int cI, Vector<String> dP, Vector<String> iP) {
+	public DiaryEditFrame(JFrame frame, String title, String cT, String cIP, int cI, Vector<String> dP,
+			Vector<String> iP) {
 		setTitle(title);
 		setLayout(new BorderLayout());
 		setBackground(new Color(229, 207, 153));
-		
+
 		currentText = cT;
 		currentImagePath = cIP;
 		currentPostIndex = cI;
 		diariesPath = dP;
 		imagesPath = iP;
-		
-		// diaryHeader
+
+		// DiaryHeader
 		JPanel diaryHeader = new JPanel(new BorderLayout(10, 10));
 		diaryHeader.setBackground(new Color(229, 207, 153));
 		ButtonFilledWithImage[] diaryHeaderBtns = new ButtonFilledWithImage[] {
@@ -62,7 +61,7 @@ public class DiaryEditFrame extends JFrame {
 		diaryHeader.add(diaryHeaderTitle, BorderLayout.CENTER);
 		diaryHeader.add(diaryHeaderBtns[1], BorderLayout.EAST);
 
-		// diaryMain
+		// DiaryMain
 		JPanel diaryMain = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		diaryMain.setBackground(new Color(255, 245, 238));
 		diaryMainWriteArea = new JTextArea(15, 36);
@@ -73,46 +72,41 @@ public class DiaryEditFrame extends JFrame {
 		diaryMainWriteArea.setBackground(new Color(255, 239, 219));
 		diaryMain.add(new JScrollPane(diaryMainWriteArea));
 
-		// diaryFooter
+		// DiaryFooter
 		JPanel diaryFooter = new JPanel(new BorderLayout(10, 10));
 		diaryFooter.setBackground(new Color(229, 221, 175));
+
+		// DiaryFooterLeft
 		JPanel diaryFooterLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		diaryFooterLeftPanel.setBackground(new Color(229, 221, 175));
 		ButtonFilledWithImage diaryImageButton = new ButtonFilledWithImage("public/btn_diaryLoadImage.png", 50, 50);
-//		ButtonFilledWithImage[] diaryFooterBtns = new ButtonFilledWithImage[] {
-//				new ButtonFilledWithImage("public/btn_diaryLoadImage.png", 50, 50),
-//				new ButtonFilledWithImage("public/btn_mainLoadImage.png", 100, 50) };
-//
-//		for (ButtonFilledWithImage diaryFooterBtn : diaryFooterBtns) {
-//			diaryFooterLeftPanel.add(diaryFooterBtn);
-//		}
 		diaryFooterLeftPanel.add(diaryImageButton);
 
+		// DiaryFooterRight
 		JPanel diaryFooterRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
 		diaryFooterRightPanel.setBackground(new Color(229, 221, 175));
 
 		JLabel numOfCharsLabel = new JLabel(Integer.toString(diaryMainWriteArea.getText().length()));
 		numOfCharsLabel.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
 		diaryFooterRightPanel.add(numOfCharsLabel);
-		
-//		diaryTimeLabel = new JLabel(formattedNow);
-//		diaryTimeLabel.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
-//		diaryFooterRightPanel.add(diaryTimeLabel);
 
+		// Add to DiaryFooter : DiaryFooterLeft, DiaryFooterRight
 		diaryFooter.add(diaryFooterLeftPanel, BorderLayout.WEST);
 		diaryFooter.add(diaryFooterRightPanel, BorderLayout.EAST);
 
-		// add:diaryHeader, diaryMain, diaryFooter
+		// Add to this : DiaryHeader, DiaryMain, DiaryFooter
 		add(diaryHeader, BorderLayout.NORTH);
 		add(diaryMain, BorderLayout.CENTER);
 		add(diaryFooter, BorderLayout.SOUTH);
-		
+
+		// Listener
 		diaryHeaderBtns[0].addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		});
+
 		diaryMainWriteArea.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -120,6 +114,7 @@ public class DiaryEditFrame extends JFrame {
 				currentText = diaryMainWriteArea.getText();
 			}
 		});
+		
 		diaryHeaderBtns[1].addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -127,7 +122,7 @@ public class DiaryEditFrame extends JFrame {
 				dispose();
 			}
 		});
-		
+
 		diaryImageButton.addActionListener(new ActionListener() {
 			private JFileChooser chooser = new JFileChooser();
 			private FileNameExtensionFilter imageFilter = new FileNameExtensionFilter("JPG & PNG", "jpg", "png");
@@ -154,16 +149,17 @@ public class DiaryEditFrame extends JFrame {
 		diaryMainWriteArea.requestFocus();
 		setVisible(true);
 	}
-	
+
 	public void editDiary() {
 		currentText = diaryMainWriteArea.getText();
 		Diary.editTextFromFile(diariesPath, currentText, currentPostIndex);
-		if(isSelectedImage) {
+		if (isSelectedImage) {
 			Diary.editImageFromFile(imagesPath, currentImagePath, currentPostIndex);
 		}
 	}
+
 	public String getCurrentText() {
 		return currentText;
 	}
-	
+
 }

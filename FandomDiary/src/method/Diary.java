@@ -25,13 +25,13 @@ public class Diary {
 			//set destPath
 			String destPath = "images/" + fileNameFormatted + srcExtension;
 			//copy Image
-			Diary.copyImage(srcPath, destPath);
+			Diary.copyFile(srcPath, destPath);
 		} else { //if image file is not selected
 			String destPath = "images/" + fileNameFormatted + ".jpg";
-			Diary.copyImage("public/default_image.jpg", destPath);
+			Diary.copyFile("public/default_image.jpg", destPath);
 		}
 	}
-	public static void copyImage(String srcPath, String destPath) {
+	public static void copyFile(String srcPath, String destPath) {
 		try {
 			FileInputStream fis = new FileInputStream(srcPath);
             BufferedInputStream bis = new BufferedInputStream(fis);
@@ -62,9 +62,11 @@ public class Diary {
 			err.printStackTrace();
 		}
 	}
+	
 	public static void editImageFromFile(Vector<String> imagesPath, String currentImagePath, int currentPostIndex) {
-		Diary.copyImage(currentImagePath, imagesPath.get(currentPostIndex));
+		Diary.copyFile(currentImagePath, imagesPath.get(currentPostIndex));
 	}
+	
 	public static String getTextFromFile(Vector<String> diariesPath, int currentPostIndex) {
 		StringBuffer sb = new StringBuffer();
 		try {

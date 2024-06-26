@@ -72,7 +72,7 @@ public class FileDiary {
 			diariesJTextArea.add(diary);
 		}
 	}
-
+	
 	public static void addImagesToVector(Vector<String> imagesPath, Vector<ButtonFilledWithImage> imagesBtns, int postIndex) {
 
 		for(; postIndex < imagesPath.size(); postIndex++) {

@@ -10,7 +10,6 @@ public class NonBorderButton extends JButton {
 		setBorderPainted(false);
 		setFocusPainted(false);
 		setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
-//		setForeground(new Color(139, 69, 19));
 	}
 
 }
