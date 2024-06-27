@@ -1,14 +1,13 @@
 package frame;
 
+import lib.NonBorderButton;
+import method.Diary;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import lib.NonBorderButton;
-import method.Diary;
 
 public class SettingDialog extends JDialog {
 	private JFileChooser chooserImage = new JFileChooser();

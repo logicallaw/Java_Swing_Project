@@ -6,11 +6,11 @@ import lib.NonBorderButton;
 import frame.EditLabelDialog;
 import frame.InfoAppDialog;
 import frame.SettingDialog;
+import frame.DiaryEditFrame;
+import frame.DiaryFrame;
 import method.FileDiary;
 import method.Diary;
 import thread.MusicThread;
-import frame.DiaryEditFrame;
-import frame.DiaryFrame;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -61,7 +61,9 @@ public class FandomDiaryApp extends JFrame {
 	private int currentPostIndex;
 
 	// Sidebar Panel
-	ButtonFilledWithImage sbProfile = null;
+	private ButtonFilledWithImage sbProfile = null;
+	private Vector<String> sbLabelsPath = new Vector<String>();
+	private Vector<JLabel> sbLabels = new Vector<JLabel>();
 
 	public FandomDiaryApp() {
 		setTitle("Fandom Diary");
@@ -340,13 +342,14 @@ public class FandomDiaryApp extends JFrame {
 		sbProfile = new ButtonFilledWithImage("public/default_image.jpg", 100, 100);
 		// https://ldne.tistory.com/56
 		sbProfile.setAlignmentX(Component.CENTER_ALIGNMENT);
-		JLabel[] sbLabels = new JLabel[] { new JLabel("IU"), new JLabel("93.05.16"), new JLabel("INFJ"),
-				new JLabel("2008.09.18~") };
-
-		// Setting : sbLabels
-		for (JLabel sbLabel : sbLabels) {
-			sbLabel.setFont(new Font("Comic Sans MS", Font.BOLD, 13));
-			sbLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		// SideBarLabels
+		FileDiary.getFilePathSidebar(sbLabelsPath);
+		FileDiary.addSideBarToVector(sbLabelsPath, sbLabels);
+		
+		// Add Listener to SideBarLabels
+		for (int i = 0; i < sbLabels.size(); i++) {
+			JLabel sbLabel = sbLabels.get(i);
 			sbLabel.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseReleased(MouseEvent e) {
@@ -355,7 +358,11 @@ public class FandomDiaryApp extends JFrame {
 					editLabelDialog.addWindowListener(new WindowAdapter() {
 						@Override
 						public void windowClosed(WindowEvent we) {
-							
+							String beforeText = editLabelDialog.getBeforeText();
+							String afterText = sbLabel.getText();
+							if(!beforeText.equals(afterText)) {
+								FileDiary.editSideBar(beforeText, afterText, sbLabelsPath);
+							}
 						}});
 					repaint();
 					revalidate();
@@ -412,7 +419,7 @@ public class FandomDiaryApp extends JFrame {
 			e.printStackTrace();
 		}
 	}
-
+	
 	// Methods : updatePosts()
 	public int updatePosts(LinkedList<JPanel> postIndexList, Vector<JTextArea> diariesJTextArea,
 			Vector<String> diariesPath, Vector<ButtonFilledWithImage> imagesBtns, JPanel postPanel,

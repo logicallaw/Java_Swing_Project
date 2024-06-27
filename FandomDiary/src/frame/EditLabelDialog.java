@@ -5,11 +5,13 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class EditLabelDialog extends JDialog {
-	JLabel myLabel = null;
+	private JLabel myLabel = null;
 	private JTextArea dialogMainTa = null;
+	private String beforeText = null;
 	public EditLabelDialog(JFrame frame,JLabel myLabel) {
 		super(frame, "Edit", true);
 		this.myLabel = myLabel;
+		beforeText = myLabel.getText();
 		setLayout(new BorderLayout(10,10));
 		
 		// Header
@@ -45,10 +47,19 @@ public class EditLabelDialog extends JDialog {
 			public void keyReleased(KeyEvent e) {
 				int keyCode = e.getKeyCode();
 				if(keyCode == KeyEvent.VK_ENTER) {
-					myLabel.setText(dialogMainTa.getText());
-					dispose();
+					if(dialogMainTa.getText().length() >= 25) {
+						JOptionPane.showMessageDialog(null, "It cannot exceed 25 characters.", "WARNING", JOptionPane.ERROR_MESSAGE);
+					}
+					else {
+						// It does not include rewritten characters.
+						String currentText = dialogMainTa.getText();
+						int textSize = currentText.length();
+						myLabel.setText(currentText.substring(0, textSize - 1));
+						dispose();
+					}
 				}
 			}
 		});
 	}
+	public String getBeforeText() { return beforeText; }
 }

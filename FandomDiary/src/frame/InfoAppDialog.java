@@ -1,9 +1,8 @@
 package frame;
 
+import lib.ResizedImageIcon;
 import java.awt.*;
 import javax.swing.*;
-
-import lib.ResizedImageIcon;
 
 public class InfoAppDialog extends JDialog {
 	public InfoAppDialog(JFrame frame) {
