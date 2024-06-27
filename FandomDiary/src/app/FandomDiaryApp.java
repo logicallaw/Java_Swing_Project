@@ -52,7 +52,7 @@ public class FandomDiaryApp extends JFrame {
 
 	// https://dev-coco.tistory.com/31
 	private LocalDateTime now = LocalDateTime.now();
-	private String formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm"));
+	private String formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd HH:mm"));
 	private JLabel mainTimeLabel = new JLabel(formattedNow);
 	private String srcPath = null;
 
@@ -75,7 +75,7 @@ public class FandomDiaryApp extends JFrame {
 		createSideBarPanel();
 
 		setSize(900, 900);
-
+		
 		mainWriteArea.setFocusable(true);
 		mainWriteArea.requestFocus();
 		setLocationRelativeTo(null);
@@ -151,6 +151,7 @@ public class FandomDiaryApp extends JFrame {
 				new ButtonFilledWithImage("public/btn_stop.png", 50, 50),
 				new ButtonFilledWithImage("public/btn_replay.png", 50, 50) };
 		slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
+		slider.setBackground(new Color(128, 233, 238));
 
 		musicListener = new MusicButtonListener();
 		for (ButtonFilledWithImage btn : headerBtns) {
@@ -200,9 +201,11 @@ public class FandomDiaryApp extends JFrame {
 
 		// MainWriteFooterLeft: ImageButton, ZoomInButton
 		JPanel mainWriteFooterLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		mainWriteImageButton.setBackground(new Color(255, 239, 219));
 		mainWriteFooterLeft.add(mainWriteImageButton);
 		NonBorderButton writeZoomIn = new NonBorderButton("Zoom In");
 		writeZoomIn.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
+		writeZoomIn.setBackground(new Color(255, 239, 219));
 
 		mainWriteFooterLeft.add(writeZoomIn);
 		mainWriteFooterLeft.setBackground(new Color(255, 239, 219));
@@ -220,6 +223,9 @@ public class FandomDiaryApp extends JFrame {
 		// MainWriteButton
 		JButton mainWriteButton = new JButton("Write");
 		mainWriteButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
+		mainWriteButton.setBackground(new Color(255, 239, 219));
+		mainWriteButton.setOpaque(true);
+		mainWriteButton.setBorderPainted(false);
 
 		// Add to MainWrite : MainWriteArea, MainWriteFooter, MainWriteButton
 		mainWrite.add(new JScrollPane(mainWriteArea), BorderLayout.CENTER);
@@ -228,7 +234,7 @@ public class FandomDiaryApp extends JFrame {
 
 		// MainGallery
 		JPanel mainGallery = new JPanel(new BorderLayout(10, 10));
-		mainGallery.setBackground(new Color(255, 245, 238));
+		mainGallery.setBackground(new Color(255, 218, 185));
 
 		FileDiary.getFilePath(diariesPath, imagesPath);
 		FileDiary.addTextsToVector(diariesPath, diariesJTextArea, postIndex);
@@ -237,7 +243,7 @@ public class FandomDiaryApp extends JFrame {
 		// PostPanel; PostPanel stores the posts, including text and image.
 		postPanel = new JPanel();
 		postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
-		postPanel.setBackground(new Color(255, 245, 238));
+		postPanel.setBackground(new Color(255, 218, 185));
 		postIndex = updatePosts(postIndexList, diariesJTextArea, diariesPath, imagesBtns, postPanel, postIndex);
 
 		JScrollPane scrollPost = new JScrollPane(postPanel);
@@ -300,7 +306,7 @@ public class FandomDiaryApp extends JFrame {
 							mainWriteArea.setText(userInput);
 							// Update the current time.
 							now = LocalDateTime.now();
-							formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm"));
+							formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd HH:mm"));
 							mainTimeLabel.setText(formattedNow);
 							// Update the current post.
 							postIndex = updatePosts(postIndexList, diariesJTextArea, diariesPath, imagesBtns, postPanel,
@@ -404,7 +410,7 @@ public class FandomDiaryApp extends JFrame {
 
 		// Update the current times.
 		now = LocalDateTime.now();
-		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm"));
+		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd HH:mm"));
 		mainTimeLabel.setText(formattedNow);
 	}
 
@@ -451,8 +457,11 @@ public class FandomDiaryApp extends JFrame {
 			NonBorderButton infoBtn = new NonBorderButton("INFO");
 			NonBorderButton deleteBtn = new NonBorderButton("DELETE");
 			postDayLabel.setForeground(new Color(139, 69, 19));
+			postDayLabel.setBackground(new Color(255, 218, 185));
 			infoBtn.setForeground(new Color(139, 69, 19));
+			infoBtn.setBackground(new Color(255, 218, 185));
 			deleteBtn.setForeground(new Color(139, 69, 19));
+			deleteBtn.setBackground(new Color(255, 218, 185));
 			
 			// Add to PostFooter : DayLabel, InfoBtn, DeleteBtn
 			postMainFooter.add(postDayLabel);
@@ -493,12 +502,14 @@ public class FandomDiaryApp extends JFrame {
 					currentDiaryEditFrame.addWindowListener(new WindowAdapter() {
 						@Override
 						public void windowClosed(WindowEvent we) {
-							JTextArea tempTextArea = diariesJTextArea.get(currentPostIndex);
-							tempTextArea.setText(currentDiaryEditFrame.getCurrentText());
-							ButtonFilledWithImage tempImageButton = imagesBtns.get(currentPostIndex);
-							tempImageButton.setIcon(new ResizedImageIcon(currentImagePath, 100, 100));
-							repaint();
-							revalidate();
+							if(currentDiaryEditFrame.isClickedWriteButton()) {
+								JTextArea tempTextArea = diariesJTextArea.get(currentPostIndex);
+								tempTextArea.setText(currentDiaryEditFrame.getCurrentText());
+								ButtonFilledWithImage tempImageButton = imagesBtns.get(currentPostIndex);
+								tempImageButton.setIcon(new ResizedImageIcon(currentImagePath, 100, 100));
+								repaint();
+								revalidate();
+							}
 						}
 					});
 				}

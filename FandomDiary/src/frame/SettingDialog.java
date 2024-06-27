@@ -42,6 +42,7 @@ public class SettingDialog extends JDialog {
 		tf1.setText("Select a image file.");
 		tf1.setBackground(new Color(255, 218, 167));
 		tf1.setEditable(false);
+		tf1.setBorder(null);
 
 		NonBorderButton btn1 = new NonBorderButton("Image");
 		btn1.setBackground(new Color(255, 218, 165));
@@ -63,6 +64,7 @@ public class SettingDialog extends JDialog {
 		tf2.setText("Select a music file.");
 		tf2.setBackground(new Color(255, 218, 167));
 		tf2.setEditable(false);
+		tf2.setBorder(null);
 
 		NonBorderButton btn2 = new NonBorderButton("Music");
 		btn2.setBackground(new Color(255, 218, 165));

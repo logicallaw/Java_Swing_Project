@@ -28,6 +28,7 @@ public class DiaryEditFrame extends JFrame {
 	private Vector<String> diariesPath = null;
 	private Vector<String> imagesPath = null;
 	private boolean isSelectedImage = false;
+	private boolean isClickedWrite = false;
 
 	public DiaryEditFrame(JFrame frame, String title, String cT, String cIP, int cI, Vector<String> dP,
 			Vector<String> iP) {
@@ -149,10 +150,15 @@ public class DiaryEditFrame extends JFrame {
 		if (isSelectedImage) {
 			Diary.editImageFromFile(imagesPath, currentImagePath, currentPostIndex);
 		}
+		isClickedWrite = true;
 	}
 
 	public String getCurrentText() {
 		return currentText;
+	}
+	
+	public boolean isClickedWriteButton() {
+		return isClickedWrite;
 	}
 
 }

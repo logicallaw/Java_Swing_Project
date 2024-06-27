@@ -9,6 +9,8 @@ public class NonBorderButton extends JButton {
 		setMargin(new Insets(0, 0, 0, 0));
 		setBorderPainted(false);
 		setFocusPainted(false);
+		setOpaque(true);
+		setBorderPainted(false);
 		setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
 	}
 

@@ -56,7 +56,7 @@ public class DiaryFrame extends JFrame {
 		srcPath = srPh;
 
 		userInput = mwa.getText();
-		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd a HH:mm"));
+		formattedNow = now.format(DateTimeFormatter.ofPattern("MM/dd HH:mm"));
 
 		setTitle(title);
 		setLayout(new BorderLayout());
@@ -74,7 +74,7 @@ public class DiaryFrame extends JFrame {
 		diaryHeader.add(diaryHeaderBtns[0], BorderLayout.WEST);
 		diaryHeader.add(diaryHeaderTitle, BorderLayout.CENTER);
 		diaryHeader.add(diaryHeaderBtns[1], BorderLayout.EAST);
-
+		
 		// DiaryMain
 		JPanel diaryMain = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		diaryMain.setBackground(new Color(255, 245, 238));
@@ -118,9 +118,6 @@ public class DiaryFrame extends JFrame {
 
 		setSize(600, 800);
 		setLocationRelativeTo(frame);
-		diaryMainWriteArea.setFocusable(true);
-		diaryMainWriteArea.requestFocus();
-		setVisible(true);
 
 		// Listener
 		diaryHeaderBtns[0].addActionListener(new ActionListener() {
@@ -166,6 +163,9 @@ public class DiaryFrame extends JFrame {
 				diaryMainWriteArea.requestFocus();
 			}
 		});
+		diaryMainWriteArea.setFocusable(true);
+		diaryMainWriteArea.requestFocus();
+		setVisible(true);
 	}
 	
 	private void writeDiary() {
