@@ -18,4 +18,4 @@
  - Eclipse - Java 17
 
 #### Program_Image
-![Idol Image](public_image.PNG)
+![Idol Image](programImage.png)
