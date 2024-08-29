@@ -11,6 +11,7 @@
 
 (3) Program Operation:
 - The program starts through the FandomDiaryApp.java file, which contains the main function.
+- 📺 : https://youtu.be/Yrf0Ros0QNk?si=5s-46gsE0Gc5x0j0
 
 
 ### Environment
